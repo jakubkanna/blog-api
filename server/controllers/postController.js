@@ -12,7 +12,7 @@ const postController = {
   }),
 
   get_post: asyncHandler(async (req, res) => {
-    const post = await Post.findOne({ slug: req.params.slug });
+    const post = await Post.findOne({ _id: req.params.id });
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
