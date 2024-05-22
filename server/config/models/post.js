@@ -33,8 +33,4 @@ PostSchema.pre("save", function (next) {
   next();
 });
 
-PostSchema.virtual("url").get(function () {
-  return `/post/${this.slug}`;
-});
-
 module.exports = mongoose.model("Post", PostSchema);
