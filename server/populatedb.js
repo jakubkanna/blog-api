@@ -1,20 +1,20 @@
 #! /usr/bin/env node
+require("dotenv").config();
+var genPassword = require("./lib/passwordUtils").genPassword;
 
-const genPassword = require("./lib/passwordUtils").genPassword;
+var User = require("./config/models/user");
+var Post = require("./config/models/post");
+var Comment = require("./config/models/comment");
+var mongoose = require("mongoose");
 
-const User = require("./user");
-const Post = require("./post");
-const Comment = require("./comment");
-const mongoose = require("mongoose");
-
-const mongoDB = process.env.MONGODB_URI;
+var mongoDB = process.env.DB_STRING;
 
 console.log("This script populates test post, admin, and guest user.");
 
 main().catch((err) => console.log(err));
 
 async function wipeDatabase() {
-  const models = [User, Post, Comment];
+  var models = [User, Post, Comment];
 
   await Promise.all(models.map((model) => model.deleteMany()));
 
@@ -34,16 +34,18 @@ async function main() {
 }
 
 async function createUsers() {
-  const { hash, salt } = genPassword("root");
+  var { hash, salt } = genPassword("root");
 
-  const admin = new User({
+  var admin = new User({
     email: "admin@example.com",
+    username: "admin",
     hash: hash,
     salt: salt,
     role: "admin",
   });
-  const guest = new User({
+  var guest = new User({
     email: "guest@example.com",
+    username: "guest",
     hash: hash,
     salt: salt,
     role: "guest",
@@ -53,24 +55,51 @@ async function createUsers() {
 }
 
 async function createPosts() {
-  const admin = await User.findOne({ role: "admin" });
-  const post = new Post({
-    author: admin._id,
-    title: "Sample Post",
-    body: "This is a sample post body.",
-  });
-  await post.save();
-  console.log("Post created");
+  var admin = await User.findOne({ role: "admin" });
+
+  var postsData = [
+    { title: "Post 1", body: "Body of Post 1" },
+    { title: "Post 2", body: "Body of Post 2" },
+    { title: "Post 3", body: "Body of Post 3" },
+  ];
+
+  await Promise.all(
+    postsData.map(async (postData) => {
+      var post = new Post({
+        author: admin._id,
+        title: postData.title,
+        body: postData.body,
+      });
+      await post.save();
+    })
+  );
+
+  console.log("Posts created");
 }
 
 async function createComments() {
-  const guest = await User.findOne({ role: "guest" });
-  const post = await Post.findOne({ title: "Sample Post" });
-  const comment = new Comment({
-    author: guest._id,
-    post: post._id,
-    text: "This is a sample comment.",
-  });
-  await comment.save();
-  console.log("Comment created");
+  var guest = await User.findOne({ role: "guest" });
+  var posts = await Post.find();
+
+  // Define the number of comments for each post
+  var commentsPerPost = [1, 2, 0];
+
+  await Promise.all(
+    posts.map(async (post, index) => {
+      // Get the number of comments for the current post
+      var numComments = commentsPerPost[index];
+
+      // Create the specified number of comments for the post
+      for (let i = 0; i < numComments; i++) {
+        var comment = new Comment({
+          author: guest._id,
+          post: post._id,
+          text: `This is comment number ${i + 1} for ${post.title}`,
+        });
+        await comment.save();
+      }
+    })
+  );
+
+  console.log("Comments created");
 }
