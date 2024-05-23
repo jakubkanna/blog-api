@@ -5,7 +5,7 @@ const Post = require("../config/models/post");
 const postController = {
   get_posts: asyncHandler(async (req, res) => {
     const posts = await Post.find();
-    if (!posts) {
+    if (!posts || posts.length === 0) {
       return res.status(404).json({ message: "Posts not found" });
     }
     res.json(posts);
@@ -26,29 +26,30 @@ const postController = {
     }
     res.json(post);
   }),
-  //   create_post: asyncHandler(async (req, res) => {
-  //     const newPost = new Post(req.body);
-  //     const savedPost = await newPost.save();
-  //     res.status(201).json(savedPost);
-  //   }),
 
-  //   update_post: asyncHandler(async (req, res) => {
-  //     const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
-  //       new: true,
-  //     });
-  //     if (!updatedPost) {
-  //       return res.status(404).json({ message: "Post not found" });
-  //     }
-  //     res.json(updatedPost);
-  //   }),
+  create_post: asyncHandler(async (req, res) => {
+    const newPost = new Post(req.body);
+    const savedPost = await newPost.save();
+    res.status(201).json(newPost);
+  }),
 
-  //   delete_post: asyncHandler(async (req, res) => {
-  //     const deletedPost = await Post.findByIdAndDelete(req.params.id);
-  //     if (!deletedPost) {
-  //       return res.status(404).json({ message: "Post not found" });
-  //     }
-  //     res.json({ message: "Post deleted successfully" });
-  //   }),
+  update_post: asyncHandler(async (req, res) => {
+    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json(updatedPost);
+  }),
+
+  delete_post: asyncHandler(async (req, res) => {
+    const deletedPost = await Post.findByIdAndDelete(req.params.id);
+    if (!deletedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json({ message: "Post deleted successfully" });
+  }),
 };
 
 module.exports = postController;

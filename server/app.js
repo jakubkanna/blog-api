@@ -58,13 +58,12 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // Render the error page
-  res
-    .status(err.status || 500)
-    .json({
-      success: false,
-      message: "Internal Server Error",
-      error: err.message,
-    });
+  res.status(err.status || 500).json({
+    success: false,
+    message: "Internal Server Error",
+    status: err.status,
+    error: err.message,
+  });
   res.send("Error " + err.status);
 });
 
