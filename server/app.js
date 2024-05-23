@@ -5,6 +5,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var cors = require("cors");
 
 // Initialize Express app
 var app = express();
@@ -19,6 +20,9 @@ const limiter = RateLimit({
 // Apply rate limiter to all requests
 app.use(limiter);
 
+// Allows our Angular application to make HTTP requests to Express application
+app.use(cors());
+
 // Connect to MongoDB
 mongoose.set("strictQuery", false);
 const mongoDB = process.env.DB_STRING;
@@ -29,9 +33,8 @@ async function main() {
   await mongoose.connect(mongoDB);
 }
 
-// View engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
+// Passport configuration
+require("./config/passport");
 
 // Middleware setup
 app.use(logger("dev"));
@@ -41,7 +44,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Routes setup
-app.use("/", require("./routes/index.js"));
+app.use("/api", require("./routes/index.js"));
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -55,8 +58,14 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // Render the error page
-  res.status(err.status || 500);
-  res.render("error");
+  res
+    .status(err.status || 500)
+    .json({
+      success: false,
+      message: "Internal Server Error",
+      error: err.message,
+    });
+  res.send("Error " + err.status);
 });
 
 module.exports = app;

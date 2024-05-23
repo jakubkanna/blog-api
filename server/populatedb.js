@@ -35,6 +35,7 @@ async function main() {
 
 async function createUsers() {
   var { hash, salt } = genPassword("root");
+  const issueJWT = require("../lib/jwtUtils").issueJWT;
 
   var admin = new User({
     email: "admin@example.com",
@@ -51,6 +52,8 @@ async function createUsers() {
     role: "guest",
   });
   await User.insertMany([admin, guest]);
+  issueJWT(admin);
+  issueJWT(guest);
   console.log("Users created");
 }
 

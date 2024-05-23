@@ -19,6 +19,13 @@ const postController = {
     res.json(post);
   }),
 
+  get_post_by_slug: asyncHandler(async (req, res) => {
+    const post = await Post.findOne({ slug: req.params.slug });
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json(post);
+  }),
   //   create_post: asyncHandler(async (req, res) => {
   //     const newPost = new Post(req.body);
   //     const savedPost = await newPost.save();
