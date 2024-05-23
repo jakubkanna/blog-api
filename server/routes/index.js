@@ -3,18 +3,16 @@ var router = express.Router();
 var postController = require("../controllers/postController");
 var commentController = require("../controllers/commentController");
 var userController = require("../controllers/userController");
-var verifyRole = require("../lib/verifyUtils").verifyRole;
 var passport = require("passport");
+var authMiddleware = require("../lib/authUtils").authMiddleware;
+var verifyRole = require("../lib/authUtils").verifyRole;
+
+// Authentication middleware for protected routes
+router.use(authMiddleware);
 
 // Define unprotected routes
 router.post("/login", userController.post_login);
 router.post("/register", userController.post_register);
-
-// Authentication middleware for protected routes
-router.use((req, res, next) => {
-  if (req.path === "/login" || req.path === "/register") return next(); // Exclude "/login" and "/register" from authentication check
-  passport.authenticate("jwt", { session: false })(req, res, next);
-});
 
 // Posts
 router.get("/posts", postController.get_posts);

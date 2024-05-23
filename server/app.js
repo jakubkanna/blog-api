@@ -20,7 +20,7 @@ const limiter = RateLimit({
 // Apply rate limiter to all requests
 app.use(limiter);
 
-// Allows our Angular application to make HTTP requests to Express application
+// Allows frontend application to make HTTP requests to Express application
 app.use(cors());
 
 // Connect to MongoDB
