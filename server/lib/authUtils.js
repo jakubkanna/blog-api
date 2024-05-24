@@ -1,15 +1,10 @@
 const passport = require("passport");
 
 // Authentication middleware for protected routes
-const authMiddleware = (req, res, next) => {
-  if (req.path === "/login" || req.path === "/register") {
-    // Exclude "/login" and "/register" from authentication check
-    return next();
-  }
+const isLoggedIn = (req, res, next) => {
   passport.authenticate("jwt", { session: false })(req, res, next);
 };
 
-// Role verification middleware
 function verifyRole(role) {
   return (req, res, next) => {
     if (req.user.role === role) {
@@ -20,4 +15,10 @@ function verifyRole(role) {
   };
 }
 
-module.exports = { authMiddleware, verifyRole };
+function isCommentAuthor() {
+  return (req, res, next) => {
+    req.comment.author === req.user._id ? next() : res.sendStatus(403);
+  };
+}
+
+module.exports = { isLoggedIn, verifyRole, isCommentAuthor };

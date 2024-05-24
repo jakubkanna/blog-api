@@ -1,4 +1,5 @@
 // comment.js
+const Post = require("./post");
 
 const mongoose = require("mongoose");
 

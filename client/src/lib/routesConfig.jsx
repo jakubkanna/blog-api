@@ -41,7 +41,7 @@ const routes = [
       {
         path: "/posts/:slug",
         element: <Post />,
-        meta: { title: "Post - slug" },
+        meta: { title: "Post" }, //fetch title
       },
     ],
   },

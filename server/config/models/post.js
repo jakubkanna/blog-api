@@ -15,7 +15,6 @@ const PostSchema = new Schema({
   },
   body: { type: String, minlength: 1, required: true },
   public: { type: Boolean, default: true },
-  comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   slug: { type: String, unique: true },
 });
 

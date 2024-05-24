@@ -1,3 +1,9 @@
+import AllPosts from "./AllPosts";
+
 export default function HomePage() {
-  return <>This is home</>;
+  return (
+    <>
+      <AllPosts></AllPosts>
+    </>
+  );
 }

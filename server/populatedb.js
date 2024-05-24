@@ -35,7 +35,6 @@ async function main() {
 
 async function createUsers() {
   var { hash, salt } = genPassword("root");
-  const issueJWT = require("../lib/jwtUtils").issueJWT;
 
   var admin = new User({
     email: "admin@example.com",
@@ -52,8 +51,7 @@ async function createUsers() {
     role: "guest",
   });
   await User.insertMany([admin, guest]);
-  issueJWT(admin);
-  issueJWT(guest);
+
   console.log("Users created");
 }
 
@@ -61,9 +59,18 @@ async function createPosts() {
   var admin = await User.findOne({ role: "admin" });
 
   var postsData = [
-    { title: "Post 1", body: "Body of Post 1" },
-    { title: "Post 2", body: "Body of Post 2" },
-    { title: "Post 3", body: "Body of Post 3" },
+    {
+      title: "The Mystery of the Locked Room",
+      body: "Detective Smith entered the room, greeted by an eerie silence. All the doors were locked from the inside, and the only window was too small for a person to pass through. Yet, in the center of the room, lay the lifeless body of Mr. Johnson. Who could have committed the crime? Smith knew he had to unravel the mystery of the locked room.",
+    },
+    {
+      title: "The Haunted House on Hilltop Lane",
+      body: "Legend had it that the old mansion on Hilltop Lane was haunted by the ghost of a forlorn widow. No one dared to venture near it after dusk, except for young Sarah. One stormy night, Sarah decided to uncover the truth behind the ghostly tales. As she stepped into the creaking mansion, she felt a chill down her spine. Little did she know, the secrets of the haunted house would change her life forever.",
+    },
+    {
+      title: "The Lost Treasure of Captain Blackbeard",
+      body: "For centuries, tales of Captain Blackbeard's lost treasure had captivated the minds of treasure hunters. Many had tried and failed to find the elusive bounty. But one fateful day, a group of daring adventurers stumbled upon a map that claimed to lead to the treasure. Their journey was fraught with danger and betrayal, but they pressed on, determined to uncover the riches that lay hidden beneath the sands.",
+    },
   ];
 
   await Promise.all(
