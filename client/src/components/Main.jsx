@@ -3,10 +3,10 @@ import PropTypes from "prop-types";
 
 export default function Main({ title }) {
   return (
-    <div>
+    <main>
       <h1>{title}</h1>
       <Outlet />
-    </div>
+    </main>
   );
 }
 
