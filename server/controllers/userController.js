@@ -10,7 +10,10 @@ const userController = {
   post_login: asyncHandler(async (req, res) => {
     const user = await User.findOne({ username: req.body.username });
     if (!user)
-      res.status(401).json({ success: false, message: "Could not find user" });
+      res.status(401).json({
+        success: false,
+        message: "Could not find user " + req.body.username,
+      });
 
     const isValid = validPassword(req.body.password, user.hash, user.salt);
 
@@ -25,12 +28,11 @@ const userController = {
     } else {
       res
         .status(401)
-        .json({ success: false, message: "you entered the wrong password" });
+        .json({ success: false, message: "You entered the wrong password." });
     }
   }),
 
   post_register: asyncHandler(async (req, res, next) => {
-    console.log(req.body);
     const saltHash = genPassword(req.body.password);
 
     const salt = saltHash.salt;
@@ -49,6 +51,7 @@ const userController = {
 
     res.json({
       success: true,
+      message: "You have registered successfully.",
       user: newUser,
       token: jwt.token,
       expiresIn: jwt.expires,

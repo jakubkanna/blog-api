@@ -1,11 +1,12 @@
 // Root.js
 import { useEffect, useState } from "react";
 import { useLocation, matchRoutes } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Main from "../components/Main";
-import "../styles/root.css";
-import routes from "../lib/routesConfig"; // Import the routes configuration
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Main from "./components/Main";
+import "./styles/root.css";
+import routes from "./lib/routesConfig"; // Import the routes configuration
+import { AuthProvider } from "./components/AuthContext";
 
 export default function Root() {
   const location = useLocation();
@@ -22,9 +23,11 @@ export default function Root() {
 
   return (
     <>
-      <Header />
-      <Main title={title} />
-      <Footer />
+      <AuthProvider>
+        <Header />
+        <Main title={title} />
+        <Footer />
+      </AuthProvider>
     </>
   );
 }

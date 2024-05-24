@@ -1,12 +1,12 @@
 // routesConfig.js
-import Root from "../routes/Root";
+import Root from "../Root";
 import ErrorPage from "../routes/ErrorPage";
 import HomePage from "../routes/Home";
 import AllPosts from "../routes/AllPosts";
 import Post from "../routes/Post";
 import Register from "../routes/Register";
 import Login from "../routes/Login";
-
+import Dashboard from "../components/Dashboard";
 const routes = [
   {
     path: "/",
@@ -29,16 +29,19 @@ const routes = [
         meta: { title: "Login" },
       },
       {
+        path: "/dashboard",
+        element: <Dashboard />,
+        meta: { title: "Dashboard" },
+      },
+      {
         path: "/posts",
         element: <AllPosts />,
         meta: { title: "All Posts" },
-        children: [
-          {
-            path: "/posts/:slug",
-            element: <Post />,
-            meta: { title: "Post - slug" },
-          },
-        ],
+      },
+      {
+        path: "/posts/:slug",
+        element: <Post />,
+        meta: { title: "Post - slug" },
       },
     ],
   },

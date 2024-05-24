@@ -6,6 +6,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var cors = require("cors");
+var { errorHandler } = require("./lib/errorHandler.js");
 
 // Initialize Express app
 var app = express();
@@ -52,19 +53,6 @@ app.use(function (req, res, next) {
 });
 
 // Error handler
-app.use(function (err, req, res, next) {
-  // Set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // Render the error page
-  res.status(err.status || 500).json({
-    success: false,
-    message: "Internal Server Error",
-    status: err.status,
-    error: err.message,
-  });
-  res.send("Error " + err.status);
-});
+app.use(errorHandler);
 
 module.exports = app;
