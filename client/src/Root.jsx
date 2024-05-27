@@ -6,7 +6,7 @@ import Footer from "./components/Footer";
 import Main from "./components/Main";
 import "./styles/root.css";
 import routes from "./lib/routesConfig"; // Import the routes configuration
-import { AuthProvider } from "./components/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function Root() {
   const location = useLocation();

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "../styles/Header.css";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 import Logout from "../components/Logout";
 

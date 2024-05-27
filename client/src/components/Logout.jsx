@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { AuthContext } from "../components/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 
 export default function Logout() {
-  const { setToken } = useContext(AuthContext);
+  const { setToken, setUsername } = useContext(AuthContext);
 
   const handleLogout = async () => {
     try {
@@ -20,7 +20,10 @@ export default function Logout() {
 
       // Clear the token from localStorage and setToken to null
       localStorage.removeItem("token");
+      localStorage.removeItem("username");
+
       setToken(null);
+      setUsername(null);
 
       // Redirect the user to the login page or any other page
       window.location.href = "/login";

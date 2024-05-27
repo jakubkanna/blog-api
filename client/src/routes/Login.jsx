@@ -1,6 +1,6 @@
 import LoginForm from "../components/FormLogin";
 import { useContext } from "react";
-import { AuthContext } from "../components/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import Logout from "../components/Logout";
 
 export default function Login() {

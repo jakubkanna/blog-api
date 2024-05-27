@@ -1,18 +1,19 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null); // New state for handling error messages
-  const { setToken } = useContext(AuthContext);
+  const { setToken, username, setUsername } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSuccessLogin = (data) => {
     setToken(data.token);
+    setUsername(data.user.username);
 
     localStorage.setItem("token", data.token);
+    localStorage.setItem("username", data.user.username);
 
     navigate(-1);
   };

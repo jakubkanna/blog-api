@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { formatTimestamp } from "../lib/helpers";
 import CommentForm from "../components/FormComment";
+import Comment from "../components/Comment";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Post() {
   const { slug } = useParams();
@@ -10,6 +12,7 @@ export default function Post() {
   const [loadingPost, setLoadingPost] = useState(true);
   const [loadingComments, setLoadingComments] = useState(true);
   const [error, setError] = useState(null);
+  const { token } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -93,18 +96,22 @@ export default function Post() {
               <ul>
                 {comments.length > 0 ? (
                   comments.map((comment) => (
-                    <li key={comment._id}>
-                      <p>{comment.author.username}</p>
-                      <small>Added: {formatTimestamp(comment.timestamp)}</small>
-                      <p>{comment.text}</p>
-                    </li>
+                    <Comment
+                      token={token}
+                      key={comment._id}
+                      comment={comment}
+                    />
                   ))
                 ) : (
                   <p>No comments yet.</p>
                 )}
               </ul>
 
-              <CommentForm slug={slug} setComments={setComments} />
+              <CommentForm
+                token={token}
+                slug={slug}
+                setComments={setComments}
+              />
             </>
           )}
         </div>

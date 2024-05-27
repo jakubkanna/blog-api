@@ -1,17 +1,16 @@
-import { useState, useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function CommentForm({ slug, setComments }) {
+export default function CommentForm({ token, slug, setComments }) {
   const [commentValue, setCommentValue] = useState("");
-  const { token, loading } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
+
     const formData = {
       text: commentValue,
     };
+
     try {
       const response = await fetch(
         `http://localhost:3000/api/${slug}/comments/create`,
@@ -26,7 +25,6 @@ export default function CommentForm({ slug, setComments }) {
       );
 
       if (response.ok) {
-        // If comment submission is successful, call the onCommentSubmit function
         const data = await response.json();
         setComments((prevComments) => [...prevComments, data]);
         setCommentValue(""); // Reset form
@@ -34,13 +32,9 @@ export default function CommentForm({ slug, setComments }) {
         throw new Error("Failed to submit comment");
       }
     } catch (err) {
-      //
+      // error handler
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -49,7 +43,7 @@ export default function CommentForm({ slug, setComments }) {
           <h3>Add a Comment</h3>
           <form onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="comment">Comment:</label>
+              <label htmlFor="comment"></label>
               <textarea
                 id="comment"
                 name="comment"
