@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../components/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function Logout() {
   const { setToken } = useContext(AuthContext);
@@ -29,5 +30,5 @@ export default function Logout() {
     }
   };
 
-  return <a onClick={handleLogout}>Logout</a>;
+  return <Link onClick={handleLogout}>Logout</Link>;
 }

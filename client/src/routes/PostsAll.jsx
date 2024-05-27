@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function AllPosts() {
+export default function AllPosts({ count = 999 }) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -32,14 +32,15 @@ export default function AllPosts() {
   return (
     <div>
       <ul>
-        {posts.map((post) => (
-          <li key={post._id}>
-            <Link to={`posts/${post.slug}`}>
-              {" "}
-              <h2>{post.title}</h2>
-            </Link>
-          </li>
-        ))}
+        {posts
+          .filter((post, index) => index < count && post.public === true) // Filter posts and limit to count
+          .map((post) => (
+            <li key={post._id}>
+              <Link to={`posts/${post.slug}`}>
+                <h2>{post.title}</h2>
+              </Link>
+            </li>
+          ))}
       </ul>
     </div>
   );

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { formatTimestamp } from "../lib/helpers";
+import CommentForm from "../components/FormComment";
 
 export default function Post() {
-  const { slug } = useParams(); // Extract slug parameter from URL
+  const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [loadingPost, setLoadingPost] = useState(true);
@@ -59,8 +60,8 @@ export default function Post() {
       }
     };
 
-    fetchPost();
     fetchComments();
+    fetchPost();
   }, [slug]);
 
   if (loadingPost) {
@@ -88,19 +89,23 @@ export default function Post() {
           {loadingComments ? (
             <div>Loading comments...</div>
           ) : (
-            <ul>
-              {comments.length > 0 ? (
-                comments.map((comment) => (
-                  <li key={comment._id}>
-                    <p>{comment.author.username}</p>
-                    <small>Added: {formatTimestamp(comment.timestamp)}</small>
-                    <p>{comment.text}</p>
-                  </li>
-                ))
-              ) : (
-                <p>No comments yet.</p>
-              )}
-            </ul>
+            <>
+              <ul>
+                {comments.length > 0 ? (
+                  comments.map((comment) => (
+                    <li key={comment._id}>
+                      <p>{comment.author.username}</p>
+                      <small>Added: {formatTimestamp(comment.timestamp)}</small>
+                      <p>{comment.text}</p>
+                    </li>
+                  ))
+                ) : (
+                  <p>No comments yet.</p>
+                )}
+              </ul>
+
+              <CommentForm slug={slug} setComments={setComments} />
+            </>
           )}
         </div>
       </div>

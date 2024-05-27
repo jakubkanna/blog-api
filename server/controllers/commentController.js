@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Comment = require("../config/models/comment");
 const Post = require("../config/models/post");
+const User = require("../config/models/user");
 
 // CRUD for comments
 const commentController = {
@@ -14,7 +15,10 @@ const commentController = {
       "author",
       "username"
     );
-    if (!comments || comments.length === 0) {
+    if (comments.length === 0) {
+      return res.json([]);
+    }
+    if (!comments) {
       return res.status(404).json({ message: "Comments not found" });
     }
     res.json(comments);
@@ -29,14 +33,23 @@ const commentController = {
   }),
 
   create_comment: asyncHandler(async (req, res) => {
-    const post = await Post.findById(req.params.id);
+    console.log(req.user._id);
+    const post = await Post.findOne({ slug: req.params.slug });
+
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
+    const author = await User.findOne({ _id: req.user._id });
+
+    if (!author) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
     const newComment = new Comment({
-      ...req.body,
+      author: author._id,
       post: post._id,
+      text: req.body.text,
     });
 
     const savedComment = await newComment.save();

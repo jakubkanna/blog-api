@@ -43,7 +43,7 @@ router.post(
 
 // Must be logged in
 router.post(
-  "/comments/create-comment",
+  "/:slug/comments/create",
   isLoggedIn,
   commentController.create_comment
 );

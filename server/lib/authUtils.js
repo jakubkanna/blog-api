@@ -1,6 +1,5 @@
 const passport = require("passport");
 
-// Authentication middleware for protected routes
 const isLoggedIn = (req, res, next) => {
   passport.authenticate("jwt", { session: false })(req, res, next);
 };
