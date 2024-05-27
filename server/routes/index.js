@@ -49,13 +49,13 @@ router.post(
 );
 // Must be an author, must be logged in
 router.post(
-  "/comments/update-comment/:id",
+  "/comments/update/:id",
   isLoggedIn,
   isCommentAuthor,
   commentController.update_comment
 );
 router.post(
-  "/comments/delete-comment/:id",
+  "/comments/delete/:id",
   isLoggedIn,
   isCommentAuthor,
   commentController.delete_comment

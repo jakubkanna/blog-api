@@ -53,20 +53,23 @@ const commentController = {
     });
 
     const savedComment = await newComment.save();
+    const populatedComment = await Comment.populate(savedComment, {
+      path: "author",
+    });
 
-    res.status(201).json(savedComment);
+    res.status(201).json(populatedComment);
   }),
 
   update_comment: asyncHandler(async (req, res) => {
     const updatedComment = await Comment.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { text: req.body.text, edited: new Date() },
       { new: true }
     );
     if (!updatedComment) {
       return res.status(404).json({ message: "Comment not found" });
     }
-    res.json(updatedComment);
+    res.status(201).json(updatedComment);
   }),
 
   delete_comment: asyncHandler(async (req, res) => {
@@ -75,7 +78,7 @@ const commentController = {
       return res.status(404).json({ message: "Comment not found" });
     }
 
-    res.json({ message: "Comment deleted successfully" });
+    res.status(201).json({ message: "Comment deleted successfully" });
   }),
 };
 
