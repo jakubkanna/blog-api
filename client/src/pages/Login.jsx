@@ -4,11 +4,12 @@ import { AuthContext } from "../context/AuthContext";
 import Logout from "../components/Logout";
 
 export default function Login() {
-  const { token } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <>
-      {token ? (
+      {/* PERMISSION */}
+      {user ? (
         <>
           <p>You are already logged in.</p>
           <Logout />

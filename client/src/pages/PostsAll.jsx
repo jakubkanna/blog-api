@@ -27,16 +27,16 @@ export default function AllPosts({ count = 999 }) {
     };
 
     fetchPosts();
-  }, []); // Empty dependency array ensures the effect runs only once on component mount
+  }, []); // on mount
 
   return (
     <div>
       <ul>
         {posts
-          .filter((post, index) => index < count && post.public === true) // Filter posts and limit to count
+          .filter((post, index) => index < count && post.public === true)
           .map((post) => (
             <li key={post._id}>
-              <Link to={`posts/${post.slug}`}>
+              <Link to={`/posts/${post.slug}`}>
                 <h2>{post.title}</h2>
               </Link>
             </li>

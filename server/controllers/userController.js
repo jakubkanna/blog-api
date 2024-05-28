@@ -71,8 +71,16 @@ const userController = {
   get_user: asyncHandler(async (req, res) => {
     const user = await User.findOne(
       { _id: req.params.id },
-      { salt: 0, hash: 0, email: 0 }
+      { salt: 0, hash: 0 }
     );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  }),
+
+  get_user_current: asyncHandler(async (req, res) => {
+    const user = req.user;
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

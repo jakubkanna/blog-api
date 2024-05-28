@@ -1,12 +1,11 @@
 // routesConfig.js
 import Root from "../Root";
-import ErrorPage from "../routes/ErrorPage";
-import HomePage from "../routes/Home";
-import AllPosts from "../routes/PostsAll";
-import Post from "../routes/Post";
-import Register from "../routes/Register";
-import Login from "../routes/Login";
-import Dashboard from "../components/Dashboard";
+import ErrorPage from "../pages/ErrorPage";
+import HomePage from "../pages/Home";
+import AllPosts from "../pages/PostsAll";
+import Post from "../pages/Post";
+import Register from "../pages/Register";
+import Login from "../pages/Login";
 const routes = [
   {
     path: "/",
@@ -27,11 +26,6 @@ const routes = [
         path: "/login",
         element: <Login />,
         meta: { title: "Login" },
-      },
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-        meta: { title: "Dashboard" },
       },
       {
         path: "/posts",

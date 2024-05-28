@@ -1,12 +1,10 @@
-import { Link } from "react-router-dom";
 import "../styles/Header.css";
-import { AuthContext } from "../context/AuthContext";
-import { useContext } from "react";
-import Logout from "../components/Logout";
+import { Link } from "react-router-dom";
+import Logout from "./Logout";
+import useAuth from "../lib/useAuth";
 
 export default function Header() {
-  const { token } = useContext(AuthContext);
-
+  const { isLoggedIn } = useAuth();
   return (
     <header>
       <nav>
@@ -15,7 +13,10 @@ export default function Header() {
         </p>
         <ul className="menu">
           <li className="menu-item">
-            {token ? <Logout /> : <Link to="/login">Login</Link>}
+            {isLoggedIn && <Link to="/">Settings</Link>}
+          </li>
+          <li className="menu-item">
+            {isLoggedIn ? <Logout /> : <Link to="/login">Login</Link>}
           </li>
           <li className="menu-item">
             <Link to="/register">Register</Link>

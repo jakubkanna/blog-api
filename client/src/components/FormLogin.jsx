@@ -1,19 +1,18 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+
   const [errorMessage, setErrorMessage] = useState(null); // New state for handling error messages
-  const { setToken, username, setUsername } = useContext(AuthContext);
+  const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSuccessLogin = (data) => {
     setToken(data.token);
-    setUsername(data.user.username);
-
     localStorage.setItem("token", data.token);
-    localStorage.setItem("username", data.user.username);
 
     navigate(-1);
   };
@@ -69,6 +68,9 @@ const LoginForm = () => {
           placeholder="Password"
         />
         <button type="submit">Login</button>
+        <p>
+          Don't have an account? <Link to="/register">Register.</Link>
+        </p>
       </form>
     </div>
   );

@@ -6,7 +6,7 @@ var userController = require("../controllers/userController");
 var passport = require("passport");
 var isLoggedIn = require("../lib/authUtils").isLoggedIn;
 var verifyRole = require("../lib/authUtils").verifyRole;
-var isCommentAuthor = require("../lib/authUtils").isCommentAuthor;
+var isCommentAuthorOrAdmin = require("../lib/authUtils").isCommentAuthorOrAdmin;
 
 // Define unprotected routes
 router.post("/login", userController.post_login);
@@ -47,17 +47,19 @@ router.post(
   isLoggedIn,
   commentController.create_comment
 );
-// Must be an author, must be logged in
+router.get("/users/current", isLoggedIn, userController.get_user_current);
+
+// Must be an author or admin, must be logged in
 router.post(
   "/comments/update/:id",
   isLoggedIn,
-  isCommentAuthor,
+  isCommentAuthorOrAdmin,
   commentController.update_comment
 );
 router.post(
   "/comments/delete/:id",
   isLoggedIn,
-  isCommentAuthor,
+  isCommentAuthorOrAdmin,
   commentController.delete_comment
 );
 

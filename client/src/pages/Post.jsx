@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { formatTimestamp } from "../lib/helpers";
 import CommentForm from "../components/FormComment";
 import Comment from "../components/Comment";
 import { AuthContext } from "../context/AuthContext";
+import useAuth from "../lib/useAuth";
 
 export default function Post() {
   const { slug } = useParams();
@@ -13,6 +14,7 @@ export default function Post() {
   const [loadingComments, setLoadingComments] = useState(true);
   const [error, setError] = useState(null);
   const { token } = useContext(AuthContext);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -63,8 +65,8 @@ export default function Post() {
       }
     };
 
-    fetchComments();
     fetchPost();
+    fetchComments();
   }, [slug]);
 
   if (loadingPost) {
@@ -106,12 +108,19 @@ export default function Post() {
                   <p>No comments yet.</p>
                 )}
               </ul>
-
-              <CommentForm
-                token={token}
-                slug={slug}
-                setComments={setComments}
-              />
+              {/* PERMISSION */}
+              {isLoggedIn ? (
+                <CommentForm
+                  token={token}
+                  slug={slug}
+                  setComments={setComments}
+                />
+              ) : (
+                <p>
+                  You must be <Link to="/login">logged in</Link> to add a
+                  comment.
+                </p>
+              )}
             </>
           )}
         </div>

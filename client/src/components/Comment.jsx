@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
+import useAuth from "../lib/useAuth";
 import { formatTimestamp } from "../lib/helpers";
-import { AuthContext } from "../context/AuthContext";
 
 export default function Comment({ comment, token }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [commentData, setCommentData] = useState(comment); // State for the entire comment object
-  const { username } = useContext(AuthContext);
+  const [commentData, setCommentData] = useState(comment);
+  const { isAdmin, isAuthor } = useAuth();
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -14,18 +14,17 @@ export default function Comment({ comment, token }) {
   const handleDeleteClick = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/comments/delete/${comment._id}`,
+        `http://localhost:3000/api/comments/delete/${commentData._id}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({}),
         }
       );
       if (response.ok) {
-        // Assuming you want to remove the deleted comment from the UI
         setCommentData(null);
       } else {
         console.error("Failed to delete comment");
@@ -36,21 +35,21 @@ export default function Comment({ comment, token }) {
   };
 
   const handleInputChange = (e) => {
-    setCommentData({ ...commentData, text: e.target.value }); // Update the text property of the commentData object
+    setCommentData({ ...commentData, text: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:3000/api/comments/update/${comment._id}`,
+        `http://localhost:3000/api/comments/update/${commentData._id}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `${token}`,
           },
-          body: JSON.stringify({ text: commentData.text }), // Send the updated text from commentData
+          body: JSON.stringify({ text: commentData.text }),
         }
       );
 
@@ -65,13 +64,14 @@ export default function Comment({ comment, token }) {
   };
 
   if (!commentData) {
-    return null; // If commentData is null (i.e., comment has been deleted), return null to render nothing
+    return null;
   }
 
   return (
     <li key={commentData._id}>
       <div>
         <p>{commentData.author.username}</p>
+        {isAdmin && <small>author id: {commentData.author._id}</small>}
         <small>Added: {formatTimestamp(commentData.timestamp)}</small>
         {commentData.edited && (
           <small>Last edit: {formatTimestamp(commentData.edited)}</small>
@@ -85,11 +85,12 @@ export default function Comment({ comment, token }) {
             value={commentData.text}
             onChange={handleInputChange}
           />
+          <button type="submit">OK</button>
         </form>
       ) : (
         <p>{commentData.text}</p>
       )}
-      {username === commentData.author.username && (
+      {(isAuthor(commentData) || isAdmin) && (
         <div>
           <button type="button" onClick={handleEditClick}>
             Edit
@@ -99,6 +100,7 @@ export default function Comment({ comment, token }) {
           </button>
         </div>
       )}
+      {isAdmin && <small>comment id: {commentData._id}</small>}
     </li>
   );
 }
