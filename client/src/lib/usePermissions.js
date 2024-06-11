@@ -1,8 +1,7 @@
-// useAuth.js
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-const useAuth = () => {
+const usePermissions = () => {
   const { user } = useContext(AuthContext);
 
   const isAdmin = user && user.role === "admin";
@@ -16,4 +15,4 @@ const useAuth = () => {
   return { isLoggedIn, isAdmin, isAuthor };
 };
 
-export default useAuth;
+export default usePermissions;

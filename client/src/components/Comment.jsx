@@ -1,11 +1,11 @@
 import { useState } from "react";
-import useAuth from "../lib/useAuth";
+import usePermissions from "../lib/usePermissions";
 import { formatTimestamp } from "../lib/helpers";
 
 export default function Comment({ comment, token }) {
   const [isEditing, setIsEditing] = useState(false);
   const [commentData, setCommentData] = useState(comment);
-  const { isAdmin, isAuthor } = useAuth();
+  const { isAdmin, isAuthor } = usePermissions();
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -19,7 +19,7 @@ export default function Comment({ comment, token }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
           body: JSON.stringify({}),
         }

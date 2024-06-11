@@ -61,7 +61,7 @@ const userController = {
   //crud
 
   get_users: asyncHandler(async (req, res) => {
-    const users = await User.find({}, { salt: 0, hash: 0, email: 0 });
+    const users = await User.find({}, { salt: 0, hash: 0 });
     if (!users) {
       return res.status(404).json({ message: "Users not found" });
     }
@@ -81,10 +81,17 @@ const userController = {
 
   get_user_current: asyncHandler(async (req, res) => {
     const user = req.user;
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json(user);
+
+    const userObject = user.toObject();
+
+    delete userObject.hash;
+    delete userObject.salt;
+
+    res.json(userObject);
   }),
 };
 

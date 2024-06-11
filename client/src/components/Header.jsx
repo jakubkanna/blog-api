@@ -1,10 +1,10 @@
 import "../styles/Header.css";
 import { Link } from "react-router-dom";
 import Logout from "./Logout";
-import useAuth from "../lib/useAuth";
+import usePermissions from "../lib/usePermissions";
 
 export default function Header() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn } = usePermissions();
   return (
     <header>
       <nav>

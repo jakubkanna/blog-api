@@ -3,7 +3,6 @@ var router = express.Router();
 var postController = require("../controllers/postController");
 var commentController = require("../controllers/commentController");
 var userController = require("../controllers/userController");
-var passport = require("passport");
 var isLoggedIn = require("../lib/authUtils").isLoggedIn;
 var verifyRole = require("../lib/authUtils").verifyRole;
 var isCommentAuthorOrAdmin = require("../lib/authUtils").isCommentAuthorOrAdmin;
@@ -13,7 +12,10 @@ router.post("/login", userController.post_login);
 router.post("/register", userController.post_register);
 
 router.get("/posts", postController.get_posts);
-router.get("/posts/:slug", postController.get_post);
+
+router.get("/posts/:idOrSlug", postController.get_post);
+
+router.get("/comments", commentController.get_comments);
 router.get("/posts/:slug/comments", commentController.get_post_comments);
 router.get("/comments/:id", commentController.get_comment);
 
@@ -21,19 +23,19 @@ router.get("/comments/:id", commentController.get_comment);
 // Protected routes for post CRUD operations
 // Must be admin, must be logged in
 router.post(
-  "/posts/create-post",
+  "/posts/create",
   isLoggedIn,
   verifyRole("admin"),
   postController.create_post
 );
 router.post(
-  "/posts/update-post/:id",
+  "/posts/update/:id",
   isLoggedIn,
   verifyRole("admin"),
   postController.update_post
 );
 router.post(
-  "/posts/delete-post/:id",
+  "/posts/delete/:id",
   isLoggedIn,
   verifyRole("admin"),
   postController.delete_post
@@ -72,5 +74,10 @@ router.get(
   verifyRole("admin"),
   userController.get_user
 );
-
+router.get(
+  "/users/current",
+  isLoggedIn,
+  verifyRole("admin"),
+  userController.get_user_current
+);
 module.exports = router;

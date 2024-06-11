@@ -4,7 +4,7 @@ import { formatTimestamp } from "../lib/helpers";
 import CommentForm from "../components/FormComment";
 import Comment from "../components/Comment";
 import { AuthContext } from "../context/AuthContext";
-import useAuth from "../lib/useAuth";
+import usePermissions from "../lib/usePermissions";
 
 export default function Post() {
   const { slug } = useParams();
@@ -14,7 +14,7 @@ export default function Post() {
   const [loadingComments, setLoadingComments] = useState(true);
   const [error, setError] = useState(null);
   const { token } = useContext(AuthContext);
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn } = usePermissions();
 
   useEffect(() => {
     const fetchPost = async () => {

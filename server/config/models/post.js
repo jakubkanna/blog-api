@@ -13,22 +13,32 @@ const PostSchema = new Schema({
     minlength: 1,
     maxlength: 100,
   },
-  body: { type: String, minlength: 1, required: true },
+  data: { type: String, required: true },
   public: { type: Boolean, default: true },
   slug: { type: String, unique: true },
-  updated: { type: Date },
+  modified: { type: Date },
 });
 
 // generate the slug
-PostSchema.pre("save", function (next) {
+PostSchema.pre("save", async function (next) {
   const formattedTitle = this.title
     .toLowerCase()
     .split(" ")
     .join("-")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+  //every time formatted title is found update number and add on the end of the slug
+  let slug = formattedTitle;
+  let num = 2;
+  let post = await this.constructor.findOne({ slug });
 
-  this.slug = formattedTitle;
+  while (post) {
+    slug = `${formattedTitle}-${num}`;
+    post = await this.constructor.findOne({ slug });
+    num++;
+  }
+
+  this.slug = slug;
 
   next();
 });

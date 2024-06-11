@@ -1,16 +1,20 @@
 function errorHandler(err, req, res, next) {
+  // Log the error in development mode
+  if (req.app.get("env") === "development") {
+    console.error(err.stack);
+  }
+
   // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // Render the error page
+  // Respond with error details
   res.status(err.status || 500).json({
     success: false,
-    message: "Internal Server Error",
+    message: err.message || "Internal Server Error",
     status: err.status,
-    error: err.message,
+    error: req.app.get("env") === "development" ? err : {},
   });
-  res.send("Error " + err.status);
 }
 
 module.exports = { errorHandler };

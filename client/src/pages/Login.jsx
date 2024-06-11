@@ -1,15 +1,13 @@
 import LoginForm from "../components/FormLogin";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
 import Logout from "../components/Logout";
+import usePermissions from "../lib/usePermissions";
 
 export default function Login() {
-  const { user } = useContext(AuthContext);
+  const { isLoggedIn } = usePermissions();
 
   return (
     <>
-      {/* PERMISSION */}
-      {user ? (
+      {isLoggedIn ? (
         <>
           <p>You are already logged in.</p>
           <Logout />
