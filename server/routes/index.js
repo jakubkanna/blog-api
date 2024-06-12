@@ -3,6 +3,10 @@ var router = express.Router();
 var postController = require("../controllers/postController");
 var commentController = require("../controllers/commentController");
 var userController = require("../controllers/userController");
+var userController = require("../controllers/userController");
+var eventController = require("../controllers/eventController");
+var workController = require("../controllers/workController");
+
 var isLoggedIn = require("../lib/authUtils").isLoggedIn;
 var verifyRole = require("../lib/authUtils").verifyRole;
 var isCommentAuthorOrAdmin = require("../lib/authUtils").isCommentAuthorOrAdmin;
@@ -18,6 +22,9 @@ router.get("/posts/:idOrSlug", postController.get_post);
 router.get("/comments", commentController.get_comments);
 router.get("/posts/:slug/comments", commentController.get_post_comments);
 router.get("/comments/:id", commentController.get_comment);
+
+router.get("/events/", eventController.get_events);
+router.get("/works/", workController.get_works);
 
 // Posts
 // Protected routes for post CRUD operations
@@ -58,6 +65,7 @@ router.post(
   isCommentAuthorOrAdmin,
   commentController.update_comment
 );
+
 router.post(
   "/comments/delete/:id",
   isLoggedIn,
@@ -80,4 +88,23 @@ router.get(
   verifyRole("admin"),
   userController.get_user_current
 );
+
+// Events
+
+router.post(
+  "/events/update/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  eventController.update_event
+);
+
+// Works
+
+router.post(
+  "/works/update/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  workController.update_work
+);
+
 module.exports = router;

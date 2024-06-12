@@ -1,20 +1,25 @@
 #! /usr/bin/env node
 require("dotenv").config();
-var genPassword = require("./lib/passwordUtils").genPassword;
+const faker = require("faker");
+const genPassword = require("./lib/passwordUtils").genPassword;
 
-var User = require("./config/models/user");
-var Post = require("./config/models/post");
-var Comment = require("./config/models/comment");
-var mongoose = require("mongoose");
+const User = require("./config/models/user");
+const Post = require("./config/models/post");
+const Comment = require("./config/models/comment");
+const Event = require("./config/models/event");
 
-var mongoDB = process.env.DB_STRING;
+const mongoose = require("mongoose");
 
-console.log("This script populates test post, admin, and guest user.");
+const mongoDB = process.env.DB_STRING;
+
+console.log(
+  "This script populates posts, admin and guest user, comments, events."
+);
 
 main().catch((err) => console.log(err));
 
 async function wipeDatabase() {
-  var models = [User, Post, Comment];
+  const models = [User, Post, Comment, Event];
 
   await Promise.all(models.map((model) => model.deleteMany()));
 
@@ -29,21 +34,22 @@ async function main() {
   await createUsers();
   await createPosts();
   await createComments();
+  await createEvents();
   console.log("Debug: Closing mongoose");
   mongoose.connection.close();
 }
 
 async function createUsers() {
-  var { hash, salt } = genPassword("root");
+  const { hash, salt } = genPassword("root");
 
-  var admin = new User({
+  const admin = new User({
     email: "admin@example.com",
     username: "admin",
     hash: hash,
     salt: salt,
     role: "admin",
   });
-  var guest = new User({
+  const guest = new User({
     email: "guest@example.com",
     username: "guest",
     hash: hash,
@@ -56,29 +62,26 @@ async function createUsers() {
 }
 
 async function createPosts() {
-  var admin = await User.findOne({ role: "admin" });
+  const admin = await User.findOne({ role: "admin" });
 
-  var postsData = [
-    {
-      title: "The Mystery of the Locked Room",
-      body: "Detective Smith entered the room, greeted by an eerie silence. All the doors were locked from the inside, and the only window was too small for a person to pass through. Yet, in the center of the room, lay the lifeless body of Mr. Johnson. Who could have committed the crime? Smith knew he had to unravel the mystery of the locked room.",
-    },
-    {
-      title: "The Haunted House on Hilltop Lane",
-      body: "Legend had it that the old mansion on Hilltop Lane was haunted by the ghost of a forlorn widow. No one dared to venture near it after dusk, except for young Sarah. One stormy night, Sarah decided to uncover the truth behind the ghostly tales. As she stepped into the creaking mansion, she felt a chill down her spine. Little did she know, the secrets of the haunted house would change her life forever.",
-    },
-    {
-      title: "The Lost Treasure of Captain Blackbeard",
-      body: "For centuries, tales of Captain Blackbeard's lost treasure had captivated the minds of treasure hunters. Many had tried and failed to find the elusive bounty. But one fateful day, a group of daring adventurers stumbled upon a map that claimed to lead to the treasure. Their journey was fraught with danger and betrayal, but they pressed on, determined to uncover the riches that lay hidden beneath the sands.",
-    },
-  ];
+  const postsCount = faker.datatype.number({ min: 1, max: 3 });
+  const postsData = Array.from({ length: postsCount }).map(() => ({
+    title: faker.lorem.sentence(),
+    data: JSON.stringify({
+      blocks: Array.from({
+        length: faker.datatype.number({ min: 1, max: 5 }),
+      }).map(() => ({
+        content: faker.lorem.paragraph(),
+      })),
+    }),
+  }));
 
   await Promise.all(
     postsData.map(async (postData) => {
-      var post = new Post({
+      const post = new Post({
         author: admin._id,
         title: postData.title,
-        body: postData.body,
+        data: postData.data,
       });
       await post.save();
     })
@@ -88,23 +91,22 @@ async function createPosts() {
 }
 
 async function createComments() {
-  var guest = await User.findOne({ role: "guest" });
-  var posts = await Post.find();
+  const guest = await User.findOne({ role: "guest" });
+  const posts = await Post.find();
 
-  // Define the number of comments for each post
-  var commentsPerPost = [1, 2, 0];
+  const commentsPerPost = posts.map(() =>
+    faker.datatype.number({ min: 0, max: 3 })
+  );
 
   await Promise.all(
     posts.map(async (post, index) => {
-      // Get the number of comments for the current post
-      var numComments = commentsPerPost[index];
+      const numComments = commentsPerPost[index];
 
-      // Create the specified number of comments for the post
       for (let i = 0; i < numComments; i++) {
-        var comment = new Comment({
+        const comment = new Comment({
           author: guest._id,
           post: post._id,
-          text: `This is comment number ${i + 1} for ${post.title}`,
+          text: faker.lorem.sentence(),
         });
         await comment.save();
       }
@@ -113,3 +115,97 @@ async function createComments() {
 
   console.log("Comments created");
 }
+
+async function createEvents() {
+  const eventsData = makeData(faker.datatype.number({ min: 1, max: 3 }));
+
+  await Promise.all(
+    eventsData.map(async (event) => {
+      // Create event and its sub-events recursively
+      await createEvent(event);
+    })
+  );
+
+  console.log("Events created");
+}
+
+async function createEvent(event) {
+  // Convert curator names to string
+  const curators = event.curators;
+
+  // Create tags
+  const tags = await createTags(faker.datatype.number({ min: 1, max: 3 }));
+
+  // Create the event
+  const newEvent = new Event({
+    title: event.title,
+    start_date: event.start_date,
+    end_date: event.end_date,
+    place: event.place,
+    curators: curators.map(
+      (curator) => `${curator.firstName} ${curator.lastName}`
+    ),
+    post: event.post,
+    tags: [...tags],
+  });
+
+  await newEvent.save();
+
+  // If the event has sub-events, create them recursively
+  if (event.subRows) {
+    await Promise.all(
+      event.subRows.map(async (subEvent) => {
+        await createEvent(subEvent);
+      })
+    );
+  }
+}
+
+async function createTags(count) {
+  const tags = [];
+
+  for (let i = 0; i < count; i++) {
+    const tagName = faker.random.word();
+    tags.push(tagName);
+  }
+
+  return tags;
+}
+
+function makeData(...lens) {
+  const makeDataLevel = (depth = 0) => {
+    const len = lens[depth];
+    return range(len).map(() => {
+      return {
+        ...newEvent(),
+        subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,
+      };
+    });
+  };
+
+  return makeDataLevel();
+}
+
+function range(len) {
+  const arr = [];
+  for (let i = 0; i < len; i++) {
+    arr.push(i);
+  }
+  return arr;
+}
+
+const newEvent = () => {
+  const randomNum = faker.datatype.number({ min: 1, max: 3 });
+  const curators = Array.from({ length: randomNum }, () => ({
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+  }));
+  return {
+    title: faker.lorem.sentence(),
+    start_date: faker.date.future().toISOString().substring(0, 10),
+    end_date: faker.date.future().toISOString().substring(0, 10),
+    place: faker.address.city(),
+    tags: [],
+    curators: curators,
+  };
+};

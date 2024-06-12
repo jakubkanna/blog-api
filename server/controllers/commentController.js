@@ -6,7 +6,9 @@ const User = require("../config/models/user");
 // CRUD for comments
 const commentController = {
   get_comments: asyncHandler(async (req, res) => {
-    const comments = await Comment.find({});
+    const comments = await Comment.find({})
+      .populate("author", "username")
+      .populate("post", "title");
     if (!comments) {
       return res.status(404).json({ message: "Comment not found" });
     }
@@ -14,7 +16,7 @@ const commentController = {
   }),
 
   get_post_comments: asyncHandler(async (req, res) => {
-    const post = await Post.findOne({ slug: req.params.slug });
+    const post = await Post.findOne({ slug: req.params.slug }).populate();
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
