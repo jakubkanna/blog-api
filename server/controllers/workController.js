@@ -3,15 +3,15 @@ const Work = require("../config/models/work");
 
 const workController = {
   get_works: asyncHandler(async (req, res) => {
-    const posts = await Work.find().sort({ start_date: -1 });
-    if (!posts || posts.length === 0) {
+    const works = await Work.find().sort({ timestamp: -1 });
+    if (!works || works.length === 0) {
       return res.status(404).json({ message: "Works not found" });
     }
-    res.status(200).json(posts);
+    res.status(200).json(works);
   }),
 
   update_work: asyncHandler(async (req, res) => {
-    req.body.modified = Date.now();
+    req.body.modified_date = Date.now();
 
     const updatedWork = await Work.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -21,7 +21,22 @@ const workController = {
       return res.status(404).json({ message: "Work not found" });
     }
 
-    res.status(200).json({ message: "Work updated successfully" });
+    res.status(200).json(updatedWork);
+  }),
+
+  create_work: asyncHandler(async (req, res) => {
+    const newWork = new Work(req.body);
+    await newWork.save();
+    res.status(201).json(newWork);
+  }),
+
+  delete_work: asyncHandler(async (req, res) => {
+    const deletedWork = await Work.findByIdAndDelete(req.params.id);
+    if (!deletedWork) {
+      return res.status(404).json({ message: "Work not found" });
+    }
+    res.status(200).json({ message: "Work deleted successfully" });
   }),
 };
+
 module.exports = workController;

@@ -34,7 +34,7 @@ async function main() {
   await createUsers();
   await createPosts();
   await createComments();
-  await createEvents();
+  await createEvents(10);
   console.log("Debug: Closing mongoose");
   mongoose.connection.close();
 }
@@ -116,8 +116,8 @@ async function createComments() {
   console.log("Comments created");
 }
 
-async function createEvents() {
-  const eventsData = makeData(faker.datatype.number({ min: 1, max: 3 }));
+async function createEvents(minimumCount) {
+  const eventsData = makeData(minimumCount);
 
   await Promise.all(
     eventsData.map(async (event) => {
@@ -172,13 +172,14 @@ async function createTags(count) {
   return tags;
 }
 
-function makeData(...lens) {
+function makeData(minimumCount) {
   const makeDataLevel = (depth = 0) => {
-    const len = lens[depth];
+    const len =
+      depth === 0 ? minimumCount : faker.datatype.number({ min: 1, max: 3 });
     return range(len).map(() => {
       return {
         ...newEvent(),
-        subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,
+        subRows: depth === 0 ? makeDataLevel(depth + 1) : undefined,
       };
     });
   };
@@ -195,7 +196,7 @@ function range(len) {
 }
 
 const newEvent = () => {
-  const randomNum = faker.datatype.number({ min: 1, max: 3 });
+  const randomNum = faker.datatype.number({ min: 10, max: 15 });
   const curators = Array.from({ length: randomNum }, () => ({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),

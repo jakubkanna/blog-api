@@ -15,7 +15,6 @@ var WorkSchema = new Schema({
   year: {
     type: Number,
     max: 9999,
-    required: true,
   },
   images: [
     {
@@ -28,6 +27,22 @@ var WorkSchema = new Schema({
       ref: "Event",
     },
   ],
+  tags: [
+    {
+      type: [String],
+      validate: {
+        validator: function (tags) {
+          return tags.every(
+            (tag) => typeof tag === "string" && tag === tag.toLowerCase()
+          );
+        },
+        message: "Tags must be an array of lowercase strings",
+      },
+    },
+  ],
+  public: { type: Boolean, default: true },
+  timestamp: { type: Date, default: Date.now },
+  modified: Date,
 });
 
 module.exports = mongoose.model("Work", WorkSchema);

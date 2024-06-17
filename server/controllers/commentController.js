@@ -6,11 +6,11 @@ const User = require("../config/models/user");
 // CRUD for comments
 const commentController = {
   get_comments: asyncHandler(async (req, res) => {
-    const comments = await Comment.find({})
+    const comments = await Comment.find()
       .populate("author", "username")
       .populate("post", "title");
-    if (!comments) {
-      return res.status(404).json({ message: "Comment not found" });
+    if (!comments || comments.length === 0) {
+      return res.status(404).json({ message: "Comments not found" });
     }
     res.json(comments);
   }),

@@ -13,7 +13,7 @@ const PostSchema = new Schema({
     minlength: 1,
     maxlength: 100,
   },
-  data: { type: String, required: true },
+  data: { type: String },
   public: { type: Boolean, default: true },
   slug: { type: String, unique: true },
   modified: { type: Date },

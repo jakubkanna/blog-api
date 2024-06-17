@@ -11,12 +11,11 @@ var isLoggedIn = require("../lib/authUtils").isLoggedIn;
 var verifyRole = require("../lib/authUtils").verifyRole;
 var isCommentAuthorOrAdmin = require("../lib/authUtils").isCommentAuthorOrAdmin;
 
-// Define unprotected routes
+// Unprotected routes
 router.post("/login", userController.post_login);
 router.post("/register", userController.post_register);
 
 router.get("/posts", postController.get_posts);
-
 router.get("/posts/:idOrSlug", postController.get_post);
 
 router.get("/comments", commentController.get_comments);
@@ -36,16 +35,53 @@ router.post(
   postController.create_post
 );
 router.post(
+  "/events/create",
+  isLoggedIn,
+  verifyRole("admin"),
+  eventController.create_event
+);
+router.post(
+  "/works/create",
+  isLoggedIn,
+  verifyRole("admin"),
+  workController.create_work
+);
+router.post(
   "/posts/update/:id",
   isLoggedIn,
   verifyRole("admin"),
   postController.update_post
 );
 router.post(
+  "/works/update/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  workController.update_work
+);
+router.post(
+  "/events/update/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  eventController.update_event
+);
+router.post(
   "/posts/delete/:id",
   isLoggedIn,
   verifyRole("admin"),
   postController.delete_post
+);
+router.post(
+  "/events/delete/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  eventController.delete_event
+);
+
+router.post(
+  "/works/delete/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  workController.delete_work
 );
 
 // Comments
@@ -87,24 +123,6 @@ router.get(
   isLoggedIn,
   verifyRole("admin"),
   userController.get_user_current
-);
-
-// Events
-
-router.post(
-  "/events/update/:id",
-  isLoggedIn,
-  verifyRole("admin"),
-  eventController.update_event
-);
-
-// Works
-
-router.post(
-  "/works/update/:id",
-  isLoggedIn,
-  verifyRole("admin"),
-  workController.update_work
 );
 
 module.exports = router;
