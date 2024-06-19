@@ -20,15 +20,14 @@ const userController = {
     if (isValid) {
       const jwt = issueJWT(user);
       res.status(200).json({
-        success: true,
-        user: user,
+        user: { username: user.username, role: user.role },
         token: jwt.token,
         expiersIn: jwt.expires,
       });
     } else {
       res
         .status(401)
-        .json({ success: false, message: "You entered the wrong password." });
+        .json({ success: false, message: "Wrong password or username." });
     }
   }),
 
@@ -50,9 +49,7 @@ const userController = {
     const jwt = issueJWT(newUser);
 
     res.json({
-      success: true,
-      message: "You have registered successfully.",
-      user: newUser,
+      user: { username: newUser.username, role: user.role },
       token: jwt.token,
       expiresIn: jwt.expires,
     });

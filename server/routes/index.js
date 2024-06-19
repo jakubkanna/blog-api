@@ -6,6 +6,7 @@ var userController = require("../controllers/userController");
 var userController = require("../controllers/userController");
 var eventController = require("../controllers/eventController");
 var workController = require("../controllers/workController");
+var tagController = require("../controllers/tagController");
 
 var isLoggedIn = require("../lib/authUtils").isLoggedIn;
 var verifyRole = require("../lib/authUtils").verifyRole;
@@ -24,6 +25,8 @@ router.get("/comments/:id", commentController.get_comment);
 
 router.get("/events/", eventController.get_events);
 router.get("/works/", workController.get_works);
+
+router.get("/tags/", tagController.get_tags);
 
 // Posts
 // Protected routes for post CRUD operations
@@ -111,13 +114,13 @@ router.post(
 
 // Users
 // Must be an admin, must be logged in
-router.get("/users", isLoggedIn, verifyRole("admin"), userController.get_users);
-router.get(
-  "/users/:id",
-  isLoggedIn,
-  verifyRole("admin"),
-  userController.get_user
-);
+// router.get("/users", isLoggedIn, verifyRole("admin"), userController.get_users);
+// router.get(
+//   "/users/:id",
+//   isLoggedIn,
+//   verifyRole("admin"),
+//   userController.get_user
+// );
 router.get(
   "/users/current",
   isLoggedIn,

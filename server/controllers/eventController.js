@@ -13,11 +13,29 @@ const eventController = {
   update_event: asyncHandler(async (req, res) => {
     req.body.modified_date = Date.now();
 
-    const updatedEvent = await Event.findByIdAndUpdate(
-      req.params.id,
-      req.body,
+    // Validate req.body against the Event schema
+    // const event = new Event(req.body);
+    // const validationError = event.validateSync(); // Synchronous validation
+
+    // if (validationError) {
+    //   // If there are validation errors, respond with 400 and error messages
+    //   const errors = Object.values(validationError.errors).map(
+    //     (err) => err.message
+    //   );
+    //   return res.status(400).json({ message: errors });
+    // }
+
+    // Proceed with findOneAndUpdate
+
+    const updatedEvent = await Event.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: req.body },
       {
         new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+        runValidators: true,
+        context: "query",
       }
     );
 

@@ -18,11 +18,12 @@
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.0",
-    "mongoose-type-url": "^2.1.0",
+    "mongoose-validator": "^2.1.0",
     "morgan": "~1.9.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "pug": "^2.0.0-beta11"
+    "pug": "^2.0.0-beta11",
+    "validator": "^13.12.0"
   },
   "devDependencies": {
     "faker": "^5.5.3"
