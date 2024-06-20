@@ -65,6 +65,7 @@ var Schema = mongoose.Schema;
 var EventSchema = new Schema({
   title: { type: String, required: [true, "Title is required."], minLength: 3 },
   subtitle: String,
+  description: String,
   start_date: { type: Date },
   end_date: {
     type: Date,
