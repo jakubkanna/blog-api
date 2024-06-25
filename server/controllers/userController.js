@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../config/models/user");
-const genPassword = require("../lib/passwordUtils").genPassword;
-const validPassword = require("../lib/passwordUtils").validPassword;
-const issueJWT = require("../lib/jwtUtils").issueJWT;
+const genPassword = require("../middleware/passwordUtils").genPassword;
+const validPassword = require("../middleware/passwordUtils").validPassword;
+const issueJWT = require("../middleware/jwtUtils").issueJWT;
 
 const userController = {
   // auth

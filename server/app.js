@@ -6,27 +6,27 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var cors = require("cors");
-var { errorHandler } = require("./lib/errorHandler.js");
+var { errorHandler } = require("./middleware/errorHandler.js");
 
 // Initialize Express app
 var app = express();
 
 // Set up rate limiter: maximum of twenty requests per minute
-const RateLimit = require("express-rate-limit");
-const limiter = RateLimit({
+var RateLimit = require("express-rate-limit");
+var limiter = RateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 50,
 });
 
 // Apply rate limiter to all requests
-// app.use(limiter);
+app.use(limiter);
 
 // Allows frontend application to make HTTP requests to Express application
 app.use(cors());
 
 // Connect to MongoDB
 mongoose.set("strictQuery", false);
-const mongoDB = process.env.DB_STRING;
+var mongoDB = process.env.DB_STRING;
 
 main().catch((err) => console.log(err));
 

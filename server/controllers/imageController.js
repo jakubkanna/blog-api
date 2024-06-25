@@ -3,13 +3,11 @@ const Image = require("../config/models/image");
 
 const imageController = {
   //create
-  create_image: asyncHandler(async (req, res) => {
-    //save file
-    //
+  create_image: asyncHandler(async (req, res, next) => {
     //save reference in db
-    const newImage = new Image(req.body);
-    await newImage.save();
-    res.status(201).json(newImage);
+    // const newImage = new Image(req.body);
+    // await newImage.save();
+    res.status(201).json({ message: "test" });
   }),
   //read
   get_images: asyncHandler(async (req, res) => {

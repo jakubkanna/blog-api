@@ -8,10 +8,12 @@ var eventController = require("../controllers/eventController");
 var workController = require("../controllers/workController");
 var tagController = require("../controllers/tagController");
 var imageController = require("../controllers/imageController");
+const upload = require("../middleware/multer");
 
-var isLoggedIn = require("../lib/authUtils").isLoggedIn;
-var verifyRole = require("../lib/authUtils").verifyRole;
-var isCommentAuthorOrAdmin = require("../lib/authUtils").isCommentAuthorOrAdmin;
+var isLoggedIn = require("../middleware/authUtils").isLoggedIn;
+var verifyRole = require("../middleware/authUtils").verifyRole;
+var isCommentAuthorOrAdmin =
+  require("../middleware/authUtils").isCommentAuthorOrAdmin;
 
 // Unprotected routes
 router.post("/login", userController.post_login);
@@ -100,12 +102,15 @@ router.post(
   verifyRole("admin"),
   imageController.update_image
 );
+
 router.post(
   "/images/create",
   isLoggedIn,
   verifyRole("admin"),
+  upload.single("file"),
   imageController.create_image
 );
+
 router.post(
   "/images",
   isLoggedIn,
