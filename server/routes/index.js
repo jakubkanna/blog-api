@@ -8,7 +8,7 @@ var eventController = require("../controllers/eventController");
 var workController = require("../controllers/workController");
 var tagController = require("../controllers/tagController");
 var imageController = require("../controllers/imageController");
-const upload = require("../middleware/multer");
+const multerConfig = require("../middleware/multer");
 
 var isLoggedIn = require("../middleware/authUtils").isLoggedIn;
 var verifyRole = require("../middleware/authUtils").verifyRole;
@@ -107,7 +107,8 @@ router.post(
   "/images/create",
   isLoggedIn,
   verifyRole("admin"),
-  upload.single("file"),
+  multerConfig.upload,
+  multerConfig.processImage,
   imageController.create_image
 );
 
