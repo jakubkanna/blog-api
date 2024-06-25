@@ -41,25 +41,6 @@ var tagsValidator = [
   }),
 ];
 
-var imagesValidator = [
-  validate({
-    validator: function (values) {
-      if (!values) return true;
-
-      if (!Array.isArray(values)) {
-        return false;
-      }
-      for (let url of values) {
-        if (!validator.isURL(url)) {
-          return false;
-        }
-      }
-      return true;
-    },
-    message: "Must be a an array of Valid URLs.",
-  }),
-];
-
 var Schema = mongoose.Schema;
 
 var EventSchema = new Schema({
@@ -82,12 +63,12 @@ var EventSchema = new Schema({
   },
   venue: { type: String },
   tags: { type: [String], validate: tagsValidator },
-  images: { type: [String], validate: imagesValidator },
+  images: { type: [Schema.Types.ObjectId], ref: "Image" },
   external_url: { type: String, validate: urlValidator },
   post: { type: Schema.Types.ObjectId, ref: "Post" },
   public: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },
-  modified_date: { type: Date, default: Date.now },
+  modified: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Event", EventSchema);

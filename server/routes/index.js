@@ -7,6 +7,7 @@ var userController = require("../controllers/userController");
 var eventController = require("../controllers/eventController");
 var workController = require("../controllers/workController");
 var tagController = require("../controllers/tagController");
+var imageController = require("../controllers/imageController");
 
 var isLoggedIn = require("../lib/authUtils").isLoggedIn;
 var verifyRole = require("../lib/authUtils").verifyRole;
@@ -87,6 +88,31 @@ router.post(
   workController.delete_work
 );
 
+router.post(
+  "/images/delete/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  imageController.delete_image
+);
+router.post(
+  "/images/update/:id",
+  isLoggedIn,
+  verifyRole("admin"),
+  imageController.update_image
+);
+router.post(
+  "/images/create",
+  isLoggedIn,
+  verifyRole("admin"),
+  imageController.create_image
+);
+router.post(
+  "/images",
+  isLoggedIn,
+  verifyRole("admin"),
+  imageController.get_images
+);
+
 // Comments
 
 // Must be logged in
@@ -121,11 +147,11 @@ router.post(
 //   verifyRole("admin"),
 //   userController.get_user
 // );
-router.get(
-  "/users/current",
-  isLoggedIn,
-  verifyRole("admin"),
-  userController.get_user_current
-);
+// router.get(
+//   "/users/current",
+//   isLoggedIn,
+//   verifyRole("admin"),
+//   userController.get_user_current
+// );
 
 module.exports = router;
