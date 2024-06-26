@@ -22,7 +22,7 @@ const ImageSchema = new Schema({
   format: { type: String },
   filename: { type: String },
   bytes: { type: Number, required: true },
-  public_id: { type: String },
+  public_id: { type: String, unique: true },
   cld_url: { type: String, validate: imageURL_Validator },
   alt: { type: String, default: "" },
   tags: { type: [String], default: [] },

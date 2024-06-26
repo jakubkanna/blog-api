@@ -4,14 +4,32 @@ const Image = require("../config/models/image");
 const imageController = {
   //create
   create_image: asyncHandler(async (req, res) => {
-    console.log("DEBUG REQUEST", req.body);
-    const newImage = new Image(req.body);
+    const { public_id } = req.body;
 
-    await newImage.save();
-    res.status(201).json({
-      newImage,
-      message: "Image instance created successfully in database",
-    });
+    // Check if an image with the same public_id already exists
+    const existingImage = await Image.findOne({ public_id });
+
+    if (existingImage) {
+      // If an image with the same public_id exists, update its details
+      await Image.updateOne({ public_id }, req.body);
+
+      // Fetch the updated image
+      const updatedImage = await Image.findOne({ public_id });
+
+      res.status(200).json({
+        updatedImage,
+        message: "Image instance updated successfully in database",
+      });
+    } else {
+      // If no existing image found with the same public_id, create a new one
+      const newImage = new Image(req.body);
+      await newImage.save();
+
+      res.status(201).json({
+        newImage,
+        message: "Image instance created successfully in database",
+      });
+    }
   }),
 
   upload_image: asyncHandler(async (req, res) => {
@@ -35,6 +53,7 @@ const imageController = {
     }
     res.status(200).json(images);
   }),
+
   //update
   update_image: asyncHandler(async (req, res) => {
     req.body.modified_date = Date.now();
