@@ -27,19 +27,7 @@ var WorkSchema = new Schema({
       ref: "Event",
     },
   ],
-  tags: [
-    {
-      type: [String],
-      validate: {
-        validator: function (tags) {
-          return tags.every(
-            (tag) => typeof tag === "string" && tag === tag.toLowerCase()
-          );
-        },
-        message: "Tags must be an array of lowercase strings",
-      },
-    },
-  ],
+  tags: { type: [String], default: [] },
   public: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },
   modified: Date,

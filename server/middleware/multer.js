@@ -1,22 +1,22 @@
 var multer = require("multer");
 var sharp = require("sharp");
 var path = require("path");
-var fs = require("fs");
+
+// Check file type
+function checkFileType(file, cb) {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error: Allowed file extensions are (jpeg, jpg, png, gif)");
+  }
+}
 
 // Storage configuration for Multer
 var storage = multer.memoryStorage(); // Store the file in memory temporarily
-
-// File size limit (10MB)
-var fileFilter = function (req, file, cb) {
-  if (
-    file.mimetype.startsWith("image/") ||
-    file.mimetype.startsWith("video/")
-  ) {
-    cb(null, true); // Accept the file
-  } else {
-    cb(new Error("File type not supported"), false); // Reject the file
-  }
-};
 
 // Create Multer instance with configured storage and error handling
 var upload = multer({
@@ -24,7 +24,9 @@ var upload = multer({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB file size limit
   },
-  fileFilter: fileFilter,
+  fileFilter: function (req, file, cb) {
+    checkFileType(file, cb);
+  },
 }).single("file"); // assuming the field name for the file is 'file'
 
 // Middleware to process image with Sharp

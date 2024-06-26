@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
-var validate = require("mongoose-validator");
-var validator = require("validator");
+const validate = require("mongoose-validator");
+const validator = require("validator");
 
-var imageURL_Validator = [
+const imageURL_Validator = [
   validate({
     validator: function (url) {
-      if (!validator.isURL(url)) {
-        return false;
-      }
-      return true;
+      const options = {
+        require_tld: false, // Allow URLs without TLD (e.g., localhost)
+      };
+      return validator.isURL(url, options);
     },
     message: "Must be a Valid URL.",
   }),
@@ -16,14 +16,29 @@ var imageURL_Validator = [
 
 const Schema = mongoose.Schema;
 
-const Image = new Schema({
-  public_id: String,
+const ImageSchema = new Schema({
   url: { type: String, validate: imageURL_Validator, required: true },
-  cdn_url: { type: String, validate: imageURL_Validator },
+  original_path: { type: String, required: true },
+  format: { type: String },
+  filename: { type: String },
+  bytes: { type: Number, required: true },
+  public_id: { type: String },
+  cld_url: { type: String, validate: imageURL_Validator },
   alt: { type: String, default: "" },
-  timestamp: { type: Date, default: Date.now },
+  tags: { type: [String], default: [] },
   modified: { type: Date },
-  tags: [String],
+  timestamp: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Image", Image);
+// Pre-save hook to derive fields from original_path
+ImageSchema.pre("save", function (next) {
+  if (this.original_path) {
+    const parts = this.original_path.split(".");
+    this.original_filename = parts[0];
+    this.format = parts[1];
+    this.public_id = this.filename;
+  }
+  next();
+});
+
+module.exports = mongoose.model("Image", ImageSchema);

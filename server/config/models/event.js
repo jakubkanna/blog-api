@@ -62,7 +62,7 @@ var EventSchema = new Schema({
     },
   },
   venue: { type: String },
-  tags: { type: [String], validate: tagsValidator },
+  tags: { type: [String], validate: tagsValidator, default: [] },
   images: { type: [Schema.Types.ObjectId], ref: "Image" },
   external_url: { type: String, validate: urlValidator },
   post: { type: Schema.Types.ObjectId, ref: "Post" },

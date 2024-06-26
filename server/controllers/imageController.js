@@ -3,12 +3,30 @@ const Image = require("../config/models/image");
 
 const imageController = {
   //create
-  create_image: asyncHandler(async (req, res, next) => {
-    //save reference in db
-    // const newImage = new Image(req.body);
-    // await newImage.save();
-    res.status(201).json({ message: "test" });
+  create_image: asyncHandler(async (req, res) => {
+    console.log("DEBUG REQUEST", req.body);
+    const newImage = new Image(req.body);
+
+    await newImage.save();
+    res.status(201).json({
+      newImage,
+      message: "Image instance created successfully in database",
+    });
   }),
+
+  upload_image: asyncHandler(async (req, res) => {
+    const url =
+      "http://" + req.get("host") + "/images/" + req.file.originalname;
+    const secureUrl =
+      "https://" + req.get("host") + "/images/" + req.file.originalname;
+
+    res.status(201).json({
+      url: url,
+      secure_url: secureUrl,
+      message: "Image file saved successfully",
+    });
+  }),
+
   //read
   get_images: asyncHandler(async (req, res) => {
     const images = await Image.find().sort({ timestamp: -1 });

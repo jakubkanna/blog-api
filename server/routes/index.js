@@ -104,11 +104,18 @@ router.post(
 );
 
 router.post(
-  "/images/create",
+  "/images/upload",
   isLoggedIn,
   verifyRole("admin"),
   multerConfig.upload,
   multerConfig.processImage,
+  imageController.upload_image
+);
+
+router.post(
+  "/images/create",
+  isLoggedIn,
+  verifyRole("admin"),
   imageController.create_image
 );
 

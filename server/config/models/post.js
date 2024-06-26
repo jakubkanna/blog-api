@@ -17,6 +17,7 @@ const PostSchema = new Schema({
   public: { type: Boolean, default: true },
   slug: { type: String, unique: true },
   modified: { type: Date },
+  tags: { type: [String], default: [] },
 });
 
 // generate the slug
