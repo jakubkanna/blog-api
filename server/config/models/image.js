@@ -20,6 +20,7 @@ const ImageSchema = new Schema({
   url: { type: String, validate: imageURL_Validator, required: true },
   original_path: { type: String, required: true },
   format: { type: String },
+  dimensions: { height: Number, width: Number },
   filename: { type: String },
   bytes: { type: Number, required: true },
   public_id: { type: String, unique: true },

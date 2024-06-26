@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Image = require("../config/models/image");
+const sizeOf = require("image-size");
 
 const imageController = {
   //create
@@ -33,14 +34,19 @@ const imageController = {
   }),
 
   upload_image: asyncHandler(async (req, res) => {
+    const imagePath = req.file.path;
+
     const url =
       "http://" + req.get("host") + "/images/" + req.file.originalname;
     const secureUrl =
       "https://" + req.get("host") + "/images/" + req.file.originalname;
 
+    var dimensions = sizeOf(imagePath);
+
     res.status(201).json({
       url: url,
       secure_url: secureUrl,
+      dimensions: dimensions,
       message: "Image file saved successfully",
     });
   }),
