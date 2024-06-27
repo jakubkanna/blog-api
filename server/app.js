@@ -21,6 +21,8 @@ var limiter = RateLimit({
 // Apply rate limiter to all requests
 app.use(limiter);
 
+//helmet
+
 // Allows frontend application to make HTTP requests to Express application
 app.use(cors());
 
@@ -45,7 +47,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Routes setup
-app.use("/api", require("./routes/index.js"));
+app.use("/api", require("./routes/index"));
+app.use("/api/posts", require("./routes/posts"));
+app.use("/api/comments", require("./routes/comments"));
+app.use("/api/events", require("./routes/events"));
+app.use("/api/works", require("./routes/works"));
+app.use("/api/tags", require("./routes/tags"));
+app.use("/api/images", require("./routes/images"));
+app.use("/api/cld", require("./routes/cld"));
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

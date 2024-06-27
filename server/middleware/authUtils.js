@@ -1,10 +1,6 @@
 const passport = require("passport");
 const Comment = require("../config/models/comment");
 
-// const isLoggedIn = (req, res, next) => {
-//   passport.authenticate("jwt", { session: false })(req, res, next);
-// };
-
 const isLoggedIn = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, function (err, user, info) {
     if (err || !user) {

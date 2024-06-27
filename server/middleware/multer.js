@@ -34,8 +34,8 @@ var processImage = function (req, res, next) {
   if (!req.file) {
     return next();
   }
+  var filename = req.file.originalname.replace(/\s/g, "_");
 
-  var filename = req.file.originalname;
   var outputPath = path.join(__dirname, "../public/images", filename);
 
   sharp(req.file.buffer)
@@ -58,6 +58,7 @@ var processImage = function (req, res, next) {
         .toFile(outputPath);
     })
     .then(function (info) {
+      req.file.filename = filename;
       req.file.path = outputPath;
       req.file.size = info.size;
       next();
