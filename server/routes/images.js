@@ -6,13 +6,13 @@ const multerConfig = require("../middleware/multer");
 
 // Protected routes for image CRUD operations
 router.post(
-  "/delete/:id",
+  "/destroy",
   isLoggedIn,
   verifyRole("admin"),
   imageinstanceController.delete_image
 );
 router.post(
-  "/update/:id",
+  "/update/:public_id",
   isLoggedIn,
   verifyRole("admin"),
   imageinstanceController.update_image

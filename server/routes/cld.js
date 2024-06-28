@@ -1,26 +1,29 @@
-var express = require("express");
-var router = express.Router();
-var crypto = require("crypto"); // Ensure you import crypto
+const express = require("express");
+const router = express.Router();
 const { isLoggedIn } = require("../middleware/authUtils");
-require("dotenv").config(); // Ensure you have dotenv to manage environment variables
+const { generateSignature } = require("../middleware/cldUtils");
 
-const CLD_API_SECRET = process.env.CLD_API_SECRET; // Ensure you have this set in your .env file
+// Route to generate signature
+router.get("/signature/:public_id/:eager?", isLoggedIn, (req, res) => {
+  const { public_id, eager } = req.params;
 
-router.post("/signature", isLoggedIn, (req, res) => {
-  const { public_id, timestamp } = req.body;
-
-  if (!public_id || !timestamp) {
-    return res.status(400).json({ error: "Missing required fields" });
+  // Check if public_id parameter is provided
+  if (!public_id) {
+    return res
+      .status(400)
+      .json({ error: "Missing required parameter: public_id" });
   }
 
-  const signature = generateSignature(public_id, timestamp);
-  res.json({ signature });
-});
+  try {
+    // Generate the signature using the provided parameters
+    const signature = generateSignature(public_id, eager);
 
-function generateSignature(public_id, timestamp) {
-  const hash = crypto.createHash("sha1");
-  hash.update(`public_id=${public_id}&timestamp=${timestamp}${CLD_API_SECRET}`);
-  return hash.digest("hex");
-}
+    // Respond with the generated signature
+    res.json({ signature });
+  } catch (error) {
+    // Handle any errors that occur during signature generation
+    res.status(500).json({ error: "Error generating signature" });
+  }
+});
 
 module.exports = router;
