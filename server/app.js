@@ -39,6 +39,9 @@ async function main() {
 // Passport configuration
 require("./config/passport");
 
+// Cloudinary config
+require("./config/cloudinary");
+
 // Middleware setup
 app.use(logger("dev"));
 app.use(express.json());

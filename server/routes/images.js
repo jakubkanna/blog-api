@@ -15,6 +15,8 @@ router.post(
   "/update/:public_id",
   isLoggedIn,
   verifyRole("admin"),
+  multerConfig.upload,
+  multerConfig.processImage,
   imageinstanceController.update_image
 );
 router.post(

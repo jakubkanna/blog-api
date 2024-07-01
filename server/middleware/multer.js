@@ -1,6 +1,6 @@
-var multer = require("multer");
-var sharp = require("sharp");
-var path = require("path");
+const multer = require("multer");
+const sharp = require("sharp");
+const path = require("path");
 
 // Check file type
 function checkFileType(file, cb) {
@@ -16,10 +16,10 @@ function checkFileType(file, cb) {
 }
 
 // Storage configuration for Multer
-var storage = multer.memoryStorage(); // Store the file in memory temporarily
+const storage = multer.memoryStorage(); // Store the file in memory temporarily
 
 // Create Multer instance with configured storage and error handling
-var upload = multer({
+const upload = multer({
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB file size limit
@@ -27,45 +27,76 @@ var upload = multer({
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
-}).single("file"); // assuming the field name for the file is 'file'
+}).array("files"); // Updated to handle multiple files
 
 // Middleware to process image with Sharp
-var processImage = function (req, res, next) {
-  if (!req.file) {
+const processImage = (req, res, next) => {
+  if (!req.files) {
     return next();
   }
-  var filename = req.file.originalname.replace(/\s/g, "_");
 
-  var outputPath = path.join(__dirname, "../public/images", filename);
+  const processedFiles = req.files.map((file) => {
+    return new Promise((resolve, reject) => {
+      // Get the original filename and extension
+      const originalname = file.originalname;
 
-  sharp(req.file.buffer)
-    .metadata()
-    .then(function (metadata) {
-      var width = metadata.width;
-      var height = metadata.height;
-      var resizeOptions = {};
+      // Separate and remove spaces
+      const parsed = path.parse(originalname);
+      const ofilenameSanitized = originalname.replace(/\s/g, "_");
+      const extname = parsed.ext;
+      const filename = parsed.name.replace(/\s/g, "_");
 
-      if (width > height) {
-        resizeOptions.width = 2160;
-      } else {
-        resizeOptions.height = 2160;
-      }
+      // Determine the output path with the correct filename and extension
+      const outputPath = path.join(
+        __dirname,
+        "../public/images",
+        ofilenameSanitized
+      );
 
-      return sharp(req.file.buffer)
-        .resize(resizeOptions)
-        .toFormat("jpeg")
-        .jpeg({ quality: 80 })
-        .toFile(outputPath);
-    })
-    .then(function (info) {
-      req.file.filename = filename;
-      req.file.path = outputPath;
-      req.file.size = info.size;
+      // Proceed with image processing using Sharp
+      sharp(file.buffer)
+        .metadata()
+        .then((metadata) => {
+          const width = metadata.width;
+          const height = metadata.height;
+          const resizeOptions = {};
+
+          if (width > 2160 || height > 2160) {
+            if (width > height) {
+              resizeOptions.width = 2160;
+            } else {
+              resizeOptions.height = 2160;
+            }
+          }
+
+          return sharp(file.buffer)
+            .resize(resizeOptions)
+            .toFormat("jpeg")
+            .jpeg({ quality: 80 })
+            .toFile(outputPath);
+        })
+        .then((info) => {
+          // Attach additional properties to req.files for further processing if needed
+          file.filename = filename;
+          file.path = outputPath;
+          file.size = info.size;
+          file.format = extname;
+          resolve(file);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  });
+
+  Promise.all(processedFiles)
+    .then((files) => {
+      req.files = files;
       next();
     })
-    .catch(function (err) {
-      next(err);
+    .catch((err) => {
+      next(err); // Pass any errors to the error handling middleware
     });
 };
 
-module.exports = { upload, processImage: processImage };
+module.exports = { upload, processImage };

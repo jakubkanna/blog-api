@@ -19,7 +19,7 @@ router.get("/signature/:public_id/:eager?", isLoggedIn, (req, res) => {
     const signature = generateSignature(public_id, eager);
 
     // Respond with the generated signature
-    res.json({ signature });
+    res.status(200).json({ signature });
   } catch (error) {
     // Handle any errors that occur during signature generation
     res.status(500).json({ error: "Error generating signature" });

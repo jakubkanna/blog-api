@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const ImageInstance = require("../config/models/imageinstance");
 const sizeOf = require("image-size");
-const path = require("path");
 const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 
 const imageinstanceController = {
   //create
@@ -20,7 +20,7 @@ const imageinstanceController = {
       const updatedImage = await ImageInstance.findOne({ public_id });
 
       res.status(200).json({
-        updatedImage,
+        imageinstance: updatedImage,
         message: "Image instance updated successfully in database",
       });
     } else {
@@ -29,25 +29,64 @@ const imageinstanceController = {
       await newImage.save();
 
       res.status(201).json({
-        newImage,
+        imageinstance: newImage,
         message: "Image instance created successfully in database",
       });
     }
   }),
-
+  // Upload images
   upload_image: asyncHandler(async (req, res) => {
-    const filename = req.file.filename;
-    const url = `http://${req.get("host")}/images/${filename}`;
-    const secureUrl = `https://${req.get("host")}/images/${filename}`;
-    const imagePath = req.file.path;
-    const dimensions = sizeOf(imagePath);
+    const files = req.files;
+    const imageInstances = [];
+
+    for (const file of files) {
+      const dimensions = sizeOf(file.path);
+      const newImage = {
+        public_id: file.filename,
+        original_filename: file.originalname,
+        filename: file.filename,
+        path: file.path,
+        format: file.mimetype.split("/")[1],
+        dimensions: dimensions,
+        url: `http://${req.get("host")}/images/${file.filename}${file.format}`,
+        secure_url: `https://${req.get("host")}/images/${file.filename}${
+          file.format
+        }`,
+        bytes: file.size,
+      };
+
+      // Check if an image with the same public_id already exists
+      let imageInstance = await ImageInstance.findOne({
+        public_id: newImage.public_id,
+      });
+
+      if (imageInstance) {
+        // Update the existing image instance
+        await ImageInstance.updateOne(
+          { public_id: newImage.public_id },
+          newImage
+        );
+        imageInstance = await ImageInstance.findOne({
+          public_id: newImage.public_id,
+        });
+      } else {
+        // Create a new image instance
+        imageInstance = new ImageInstance(newImage);
+        await imageInstance.save();
+      }
+
+      imageInstances.push(imageInstance);
+
+      // IF ENABLE_CLD Upload to Cloudinary
+      await cloudinary.uploader.upload(file.path, {
+        public_id: newImage.public_id,
+        overwrite: true,
+      });
+    }
 
     res.status(201).json({
-      url: url,
-      secure_url: secureUrl,
-      dimensions: dimensions,
-      filename: filename,
-      message: "Image file saved successfully",
+      message: "Images uploaded and instances created/updated successfully",
+      imageInstances,
     });
   }),
 
@@ -84,37 +123,17 @@ const imageinstanceController = {
   delete_image: asyncHandler(async (req, res) => {
     const { selectedImages } = req.body;
 
-    if (!Array.isArray(selectedImages) || selectedImages.length === 0) {
-      return res.status(400).json({
-        error: {
-          message:
-            "Invalid request. selectedImages should be a non-empty array.",
-        },
-      });
-    }
-
-    // Delete image instances from the database and files from server
     for (const image of selectedImages) {
-      const { public_id, original_path } = image;
+      const { public_id } = image;
 
-      // Delete image instance from the database
-      const deleteResult = await ImageInstance.deleteOne({ public_id });
-      if (deleteResult.deletedCount === 0) {
-        console.error("No image found in database with public_id:", public_id);
-        continue;
-      }
+      // IF ENABLE_CLD Delete from Cloudinary
+      await cloudinary.uploader.destroy(public_id);
 
-      // Delete image file from the server
-      const filePath = path.join(__dirname, "../public/images", original_path);
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          res.status(500).json({
-            error: {
-              message: `Error deleting file ${filePath}:, ${err}`,
-            },
-          });
-        }
-      });
+      // Delete the file
+      await fs.promises.unlink(image.path);
+
+      // Delete the image instance from the database
+      await ImageInstance.deleteOne({ public_id });
     }
 
     res.status(200).json({ message: "Images deleted successfully." });
