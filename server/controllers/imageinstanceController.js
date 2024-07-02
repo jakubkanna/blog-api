@@ -75,17 +75,31 @@ const imageinstanceController = {
         await imageInstance.save();
       }
 
-      imageInstances.push(imageInstance);
-
-      // IF ENABLE_CLD Upload to Cloudinary
-      await cloudinary.uploader.upload(file.path, {
+      // Upload to Cloudinary
+      const cloudinaryResponse = await cloudinary.uploader.upload(file.path, {
         public_id: newImage.public_id,
         overwrite: true,
       });
+
+      const cld_url = cloudinaryResponse.url;
+      const cld_secure_url = cloudinaryResponse.secure_url;
+
+      // Update the image instance with Cloudinary URLs
+      await ImageInstance.updateOne(
+        { public_id: newImage.public_id },
+        { cld_url: cld_url, cld_secure_url: cld_secure_url }
+      );
+
+      // Refresh the image instance with the latest data
+      imageInstance = await ImageInstance.findOne({
+        public_id: newImage.public_id,
+      });
+
+      imageInstances.push(imageInstance);
     }
 
     res.status(201).json({
-      message: "Images uploaded and instances created/updated successfully",
+      message: "Images uploaded successfully",
       imageInstances,
     });
   }),
