@@ -3,7 +3,7 @@ const Event = require("../config/models/event");
 
 const eventController = {
   get_events: asyncHandler(async (req, res) => {
-    const events = await Event.find().sort({ timestamp: -1 }); //{ start_date: -1 }
+    const events = await Event.find().sort({ timestamp: -1 });
     if (!events || events.length === 0) {
       return res.status(404).json({ message: "Events not found" });
     }
@@ -28,11 +28,7 @@ const eventController = {
       { _id: req.params.id },
       { $set: req.body },
       {
-        new: true,
-        upsert: true,
-        setDefaultsOnInsert: true,
         runValidators: true,
-        context: "query",
       }
     );
 
@@ -44,7 +40,6 @@ const eventController = {
 
   create_event: asyncHandler(async (req, res) => {
     const newEvent = new Event(req.body);
-    //errors will be thrown by asyncHandler
     await newEvent.save();
     res.status(201).json({ newEvent, message: "Event created successfully" });
   }),

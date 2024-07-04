@@ -24,7 +24,7 @@ var EventSchema = new Schema({
   venue: { type: String },
   tags: { type: [String], validate: tagsValidator, default: [] },
   images: { type: [Schema.Types.ObjectId], ref: "ImageInstance" },
-  external_url: { type: String, validate: URL_Validator },
+  external_urls: [{ type: String, validate: URL_Validator, default: [] }],
   post: { type: Schema.Types.ObjectId, ref: "Post" },
   public: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },
