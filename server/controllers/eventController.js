@@ -10,6 +10,17 @@ const eventController = {
     res.status(200).json(events);
   }),
 
+  get_images: asyncHandler(async (req, res) => {
+    const event = await Event.findById(req.params.id).populate("images");
+
+    if (!event) {
+      return res.status(404).json({ msg: "Event not found" });
+    }
+
+    const images = event.images;
+    res.status(200).json([...images]);
+  }),
+
   update_event: asyncHandler(async (req, res) => {
     req.body.modified_date = Date.now();
 
@@ -28,7 +39,6 @@ const eventController = {
     if (!updatedEvent) {
       return res.status(404).json({ message: "Event not found" });
     }
-
     res.status(200).json(updatedEvent);
   }),
 

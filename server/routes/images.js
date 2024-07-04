@@ -4,6 +4,8 @@ const imageinstanceController = require("../controllers/imageinstanceController"
 const { isLoggedIn, verifyRole } = require("../middleware/authUtils");
 const multerConfig = require("../middleware/multer");
 
+// unprotected
+router.get("/", imageinstanceController.get_images);
 // Protected routes for image CRUD operations
 router.post(
   "/destroy",
@@ -32,12 +34,6 @@ router.post(
   isLoggedIn,
   verifyRole("admin"),
   imageinstanceController.create_image
-);
-router.get(
-  "/",
-  isLoggedIn,
-  verifyRole("admin"),
-  imageinstanceController.get_images
 );
 
 module.exports = router;

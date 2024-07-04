@@ -1,18 +1,5 @@
 const mongoose = require("mongoose");
-const validate = require("mongoose-validator");
-const validator = require("validator");
-
-const imageURL_Validator = [
-  validate({
-    validator: function (url) {
-      const options = {
-        require_tld: false, // Allow URLs without TLD (e.g., localhost)
-      };
-      return validator.isURL(url, options);
-    },
-    message: "Must be a Valid URL.",
-  }),
-];
+var URL_Validator = require("./validators/URL_Validator");
 
 const Schema = mongoose.Schema;
 
@@ -26,10 +13,10 @@ const ImageInstanceShema = new Schema({
   tags: { type: [String], default: [] },
   alt: { type: String, default: "" },
   bytes: { type: Number, required: true },
-  url: { type: String, validate: imageURL_Validator, required: true },
-  secure_url: { type: String, validate: imageURL_Validator },
-  cld_url: { type: String, validate: imageURL_Validator },
-  cld_secure_url: { type: String, validate: imageURL_Validator },
+  url: { type: String, validate: URL_Validator, required: true },
+  secure_url: { type: String, validate: URL_Validator },
+  cld_url: { type: String, validate: URL_Validator },
+  cld_secure_url: { type: String, validate: URL_Validator },
   modified: { type: Date },
   timestamp: { type: Date, default: Date.now },
 });
@@ -46,3 +33,4 @@ ImageInstanceShema.pre("save", function (next) {
 });
 
 module.exports = mongoose.model("ImageInstance", ImageInstanceShema);
+// Importing in another file
