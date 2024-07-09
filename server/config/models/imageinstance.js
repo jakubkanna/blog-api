@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-var URL_Validator = require("./validators/URL_Validator");
+var { singleURLValidator } = require("./validators/URL_Validator");
+const tagsValidator = require("./validators/tagsValidator");
 
 const Schema = mongoose.Schema;
 
@@ -10,13 +11,13 @@ const ImageInstanceShema = new Schema({
   path: { type: String, required: true },
   format: { type: String },
   dimensions: { height: Number, width: Number },
-  tags: { type: [String], default: [] },
+  tags: { type: [String], validate: tagsValidator, default: [] },
   alt: { type: String, default: "" },
   bytes: { type: Number, required: true },
-  url: { type: String, validate: URL_Validator, required: true },
-  secure_url: { type: String, validate: URL_Validator },
-  cld_url: { type: String, validate: URL_Validator },
-  cld_secure_url: { type: String, validate: URL_Validator },
+  url: { type: String, validate: singleURLValidator, required: true },
+  secure_url: { type: String, validate: singleURLValidator },
+  cld_url: { type: String, validate: singleURLValidator },
+  cld_secure_url: { type: String, validate: singleURLValidator },
   modified: { type: Date },
   timestamp: { type: Date, default: Date.now },
 });

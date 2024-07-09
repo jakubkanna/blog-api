@@ -5,6 +5,7 @@ const { isLoggedIn, verifyRole } = require("../middleware/authUtils");
 
 // Unprotected routes
 router.get("/", eventController.get_events);
+router.get("/:id", eventController.get_event);
 router.get("/:id/images", eventController.get_images);
 
 // Protected routes for event CRUD operations

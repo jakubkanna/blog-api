@@ -1,6 +1,7 @@
+// models/Event.js
 var mongoose = require("mongoose");
 var tagsValidator = require("./validators/tagsValidator");
-var URL_Validator = require("./validators/URL_Validator");
+var { singleURLValidator } = require("./validators/URL_Validator");
 
 var Schema = mongoose.Schema;
 var EventSchema = new Schema({
@@ -23,8 +24,8 @@ var EventSchema = new Schema({
   },
   venue: { type: String },
   tags: { type: [String], validate: tagsValidator, default: [] },
-  images: { type: [Schema.Types.ObjectId], ref: "ImageInstance" },
-  external_urls: [{ type: String, validate: URL_Validator, default: [] }],
+  images: { type: [Schema.Types.ObjectId], ref: "ImageInstance", default: [] },
+  external_url: { type: String, validate: singleURLValidator },
   post: { type: Schema.Types.ObjectId, ref: "Post" },
   public: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },

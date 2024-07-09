@@ -5,6 +5,7 @@ const { isLoggedIn, verifyRole } = require("../middleware/authUtils");
 
 // Unprotected routes
 router.get("/", workController.get_works);
+router.get("/:id/images", workController.get_images);
 
 // Protected routes for work CRUD operations
 router.post(
