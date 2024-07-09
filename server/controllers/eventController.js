@@ -11,7 +11,9 @@ const eventController = {
   }),
 
   get_event: asyncHandler(async (req, res) => {
-    const event = await Event.findById(req.params.id);
+    const event = await Event.findById(req.params.id)
+      .populate("post", "title _id")
+      .populate("images");
     if (!event) return res.status(404).json({ message: "Event not found" });
     res.status(200).json(event);
   }),
