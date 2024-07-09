@@ -43,7 +43,8 @@ const postController = {
     });
 
     await newPost.save();
-    res.status(201).json({ newPost, message: "Post created successfully" });
+    console.log(newPost);
+    res.status(201).json(newPost);
   }),
 
   update_post: asyncHandler(async (req, res) => {
@@ -57,7 +58,7 @@ const postController = {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    res.status(200).json({ message: "Post updated successfully" });
+    res.status(200).json(updatedPost);
   }),
 
   delete_post: asyncHandler(async (req, res) => {
