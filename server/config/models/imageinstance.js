@@ -5,15 +5,15 @@ const tagsValidator = require("./validators/tagsValidator");
 const Schema = mongoose.Schema;
 
 const ImageInstanceShema = new Schema({
-  public_id: { type: String, unique: true },
-  original_filename: { type: String },
+  public_id: { type: String, unique: true, required: true },
+  original_filename: { type: String, required: true },
   filename: { type: String },
   path: { type: String, required: true },
   format: { type: String },
   dimensions: { height: Number, width: Number },
   tags: { type: [String], validate: tagsValidator, default: [] },
   alt: { type: String, default: "" },
-  bytes: { type: Number, required: true },
+  bytes: { type: Number },
   url: { type: String, validate: singleURLValidator, required: true },
   secure_url: { type: String, validate: singleURLValidator },
   cld_url: { type: String, validate: singleURLValidator },

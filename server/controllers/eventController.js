@@ -3,7 +3,9 @@ const Event = require("../config/models/event");
 
 const eventController = {
   get_events: asyncHandler(async (req, res) => {
-    const events = await Event.find().sort({ timestamp: -1 });
+    const events = await Event.find()
+      .sort({ timestamp: -1 })
+      .populate("images");
     if (!events || events.length === 0) {
       return res.status(404).json({ message: "Events not found" });
     }
@@ -11,9 +13,7 @@ const eventController = {
   }),
 
   get_event: asyncHandler(async (req, res) => {
-    const event = await Event.findById(req.params.id)
-      .populate("post", "title _id")
-      .populate("images");
+    const event = await Event.findById(req.params.id).populate("images");
     if (!event) return res.status(404).json({ message: "Event not found" });
     res.status(200).json(event);
   }),
@@ -47,13 +47,12 @@ const eventController = {
       return res.status(404).json({ message: "Event not found" });
 
     res.status(200).json(updatedEvent);
-    console.log(updatedEvent);
   }),
 
   create_event: asyncHandler(async (req, res) => {
     const newEvent = new Event(req.body);
     await newEvent.save();
-    res.status(201).json({ newEvent, message: "Event created successfully" });
+    res.status(201).json(newEvent);
   }),
 
   delete_event: asyncHandler(async (req, res) => {

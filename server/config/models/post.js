@@ -4,8 +4,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const BlockSchema = new mongoose.Schema({
-  id: { type: String },
-  content: { type: String, default: "" },
+  id: String,
+  type: String,
+  html: { type: String, default: "" },
   index: { type: Number, unique: true, min: 0 },
 });
 

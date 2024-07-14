@@ -20,75 +20,14 @@ const userController = {
     if (isValid) {
       const jwt = issueJWT(user);
       res.status(200).json({
-        user: { username: user.username, role: user.role },
+        success: true,
+        user: { username: user.username },
         token: jwt.token,
         expiersIn: jwt.expires,
       });
     } else {
-      res
-        .status(401)
-        .json({ success: false, message: "Wrong password or username." });
+      throw new Error("Wrong password or login");
     }
-  }),
-
-  post_register: asyncHandler(async (req, res, next) => {
-    const saltHash = genPassword(req.body.password);
-
-    const salt = saltHash.salt;
-    const hash = saltHash.hash;
-
-    const newUser = new User({
-      username: req.body.username,
-      email: req.body.email,
-      hash: hash,
-      salt: salt,
-    });
-
-    await newUser.save();
-
-    const jwt = issueJWT(newUser);
-
-    res.json({
-      user: { username: newUser.username, role: user.role },
-      token: jwt.token,
-      expiresIn: jwt.expires,
-    });
-  }),
-
-  //crud
-
-  get_users: asyncHandler(async (req, res) => {
-    const users = await User.find({}, { salt: 0, hash: 0 });
-    if (!users) {
-      return res.status(404).json({ message: "Users not found" });
-    }
-    res.json(users);
-  }),
-
-  get_user: asyncHandler(async (req, res) => {
-    const user = await User.findOne(
-      { _id: req.params.id },
-      { salt: 0, hash: 0 }
-    );
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.json(user);
-  }),
-
-  get_user_current: asyncHandler(async (req, res) => {
-    const user = req.user;
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const userObject = user.toObject();
-
-    delete userObject.hash;
-    delete userObject.salt;
-
-    res.json(userObject);
   }),
 };
 

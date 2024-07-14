@@ -4,6 +4,11 @@ var tagsValidator = require("./validators/tagsValidator");
 var { singleURLValidator } = require("./validators/URL_Validator");
 
 var Schema = mongoose.Schema;
+
+const URLSchema = new Schema({
+  url: { type: String, validate: singleURLValidator },
+});
+
 var EventSchema = new Schema({
   title: { type: String, required: [true, "Title is required."], minLength: 3 },
   subtitle: String,
@@ -25,8 +30,7 @@ var EventSchema = new Schema({
   venue: { type: String },
   tags: { type: [String], validate: tagsValidator, default: [] },
   images: { type: [Schema.Types.ObjectId], ref: "ImageInstance", default: [] },
-  external_url: { type: String, validate: singleURLValidator },
-  post: { type: Schema.Types.ObjectId, ref: "Post" },
+  external_urls: [URLSchema],
   public: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },
   modified: { type: Date, default: Date.now },

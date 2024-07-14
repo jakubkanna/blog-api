@@ -7,7 +7,6 @@ const workController = {
       .sort({ timestamp: -1 })
       .populate("events")
       .populate("images");
-
     if (!works || works.length === 0) {
       return res.status(404).json({ message: "Works not found" });
     }
@@ -34,7 +33,6 @@ const workController = {
     if (!updatedWork) {
       return res.status(404).json({ message: "Work not found" });
     }
-    console.log(updatedWork);
     res.status(200).json(updatedWork);
   }),
 
