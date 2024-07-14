@@ -116,6 +116,7 @@ const SettingSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  modified: Date,
 });
 
 // Ensure only one document in the collection

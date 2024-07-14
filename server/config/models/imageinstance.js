@@ -11,15 +11,16 @@ const ImageInstanceShema = new Schema({
   path: { type: String, required: true },
   format: { type: String },
   dimensions: { height: Number, width: Number },
-  tags: { type: [String], validate: tagsValidator, default: [] },
-  alt: { type: String, default: "" },
   bytes: { type: Number },
   url: { type: String, validate: singleURLValidator, required: true },
   secure_url: { type: String, validate: singleURLValidator },
   cld_url: { type: String, validate: singleURLValidator },
   cld_secure_url: { type: String, validate: singleURLValidator },
-  modified: { type: Date },
+
+  tags: { type: [String], validate: tagsValidator, default: [] },
+  alt: { type: String, default: "" },
   timestamp: { type: Date, default: Date.now },
+  modified: { type: Date },
 });
 
 // Pre-save hook to derive fields from original_path

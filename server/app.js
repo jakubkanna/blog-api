@@ -52,7 +52,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routes setup
 app.use("/api", require("./routes/index"));
 app.use("/api/posts", require("./routes/posts"));
-app.use("/api/comments", require("./routes/comments"));
 app.use("/api/events", require("./routes/events"));
 app.use("/api/works", require("./routes/works"));
 app.use("/api/tags", require("./routes/tags"));

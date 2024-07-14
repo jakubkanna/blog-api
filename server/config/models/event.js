@@ -6,7 +6,11 @@ var { singleURLValidator } = require("./validators/URL_Validator");
 var Schema = mongoose.Schema;
 
 const URLSchema = new Schema({
-  url: { type: String, validate: singleURLValidator },
+  url: {
+    type: String,
+    validate: singleURLValidator,
+    default: "https://example.com/dogs",
+  },
 });
 
 var EventSchema = new Schema({
@@ -31,9 +35,45 @@ var EventSchema = new Schema({
   tags: { type: [String], validate: tagsValidator, default: [] },
   images: { type: [Schema.Types.ObjectId], ref: "ImageInstance", default: [] },
   external_urls: [URLSchema],
+
+  slug: { type: String, unique: true },
+  metadata: {
+    title: {
+      type: String,
+      default: "Default Title",
+    },
+    description: {
+      type: String,
+      default: "Default description for the homepage.",
+    },
+  },
+  tags: { type: [String], default: [] },
   public: { type: Boolean, default: true },
   timestamp: { type: Date, default: Date.now },
-  modified: { type: Date, default: Date.now },
+  modified: { type: Date },
 });
 
+// generate the slug
+EventSchema.pre("save", async function (next) {
+  const formattedTitle = this.title
+    .toLowerCase()
+    .split(" ")
+    .join("-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  //every time formatted title is found, update add it's number on the end
+  let slug = formattedTitle;
+  let num = 2;
+  let schema = await this.constructor.findOne({ slug });
+
+  while (schema) {
+    slug = `${formattedTitle}-${num}`;
+    schema = await this.constructor.findOne({ slug });
+    num++;
+  }
+
+  this.slug = slug;
+
+  next();
+});
 module.exports = mongoose.model("Event", EventSchema);

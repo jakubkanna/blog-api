@@ -1,18 +1,15 @@
 //post.js
 
 const mongoose = require("mongoose");
+const { singleURLValidator } = require("./validators/URL_Validator");
 const { Schema } = mongoose;
 
 const BlockSchema = new mongoose.Schema({
-  id: String,
-  type: String,
   html: { type: String, default: "" },
-  index: { type: Number, unique: true, min: 0 },
 });
 
 const PostSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  timestamp: { type: Date, default: Date.now },
   title: {
     type: String,
     default: "Untitled",
@@ -20,9 +17,21 @@ const PostSchema = new Schema({
     maxlength: 100,
   },
   content: { type: [BlockSchema] },
-  public: { type: Boolean, default: true },
+
   slug: { type: String, unique: true },
+  metadata: {
+    title: {
+      type: String,
+      default: "Default Title",
+    },
+    description: {
+      type: String,
+      default: "Default description for the homepage.",
+    },
+  },
   tags: { type: [String], default: [] },
+  public: { type: Boolean, default: true },
+  timestamp: { type: Date, default: Date.now },
   modified: { type: Date },
 });
 
