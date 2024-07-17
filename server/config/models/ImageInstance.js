@@ -5,6 +5,7 @@ const tagsValidator = require("./validators/tagsValidator");
 const Schema = mongoose.Schema;
 
 const ImageInstanceShema = new Schema({
+  type: { type: String, default: "image", enum: ["image"] },
   public_id: { type: String, unique: true, required: true },
   original_filename: { type: String, required: true },
   filename: { type: String },

@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const ImageInstance = require("../config/models/imageinstance");
+const ImageInstance = require("../config/models/ImageInstance");
 const sizeOf = require("image-size");
 const fs = require("fs");
 const cloudinary = require("cloudinary").v2;
@@ -20,7 +20,7 @@ const imageinstanceController = {
       const updatedImage = await ImageInstance.findOne({ public_id });
 
       res.status(200).json({
-        imageinstance: updatedImage,
+        ImageInstance: updatedImage,
         message: "Image instance updated successfully in database",
       });
     } else {
@@ -29,7 +29,7 @@ const imageinstanceController = {
       await newImage.save();
 
       res.status(201).json({
-        imageinstance: newImage,
+        ImageInstance: newImage,
         message: "Image instance created successfully in database",
       });
     }
@@ -98,10 +98,7 @@ const imageinstanceController = {
       imageInstances.push(imageInstance);
     }
 
-    res.status(201).json({
-      message: "Images uploaded successfully",
-      imageInstances,
-    });
+    res.status(201).json(imageInstances);
   }),
 
   //read
@@ -115,10 +112,10 @@ const imageinstanceController = {
 
   //update
   update_image: asyncHandler(async (req, res) => {
-    req.body.modified_date = Date.now();
+    req.body.modified = Date.now();
 
     const updatedImage = await ImageInstance.findOneAndUpdate(
-      { public_id: req.params.public_id },
+      { _id: req.body._id },
       req.body,
       {
         new: true,
@@ -135,12 +132,12 @@ const imageinstanceController = {
 
   //delete
   delete_image: asyncHandler(async (req, res) => {
-    const { selectedImages } = req.body;
+    const selectedImages = req.body;
 
     for (const image of selectedImages) {
       const { public_id } = image;
 
-      // IF ENABLE_CLD Delete from Cloudinary
+      //  Delete from Cloudinary
       await cloudinary.uploader.destroy(public_id);
 
       // Delete the file

@@ -5,6 +5,7 @@ const { jwtAuth } = require("../middleware/authUtils");
 
 // Unprotected routes
 router.get("/", workController.get_works);
+router.get("/medium-list", workController.get_medium_list);
 router.get("/:id/images", workController.get_images);
 
 // Protected routes for work CRUD operations

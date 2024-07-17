@@ -30,7 +30,7 @@ const eventController = {
   }),
 
   update_event: asyncHandler(async (req, res) => {
-    req.body.modified_date = Date.now();
+    req.body.modified = Date.now();
 
     if (req.body.post === "") req.body.post = null;
 

@@ -15,6 +15,7 @@ var WorkSchema = new Schema({
       default: "",
     },
   ],
+  dimensions: String,
   year: {
     type: Number,
     max: 9999,

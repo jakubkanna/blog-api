@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const Work = require("../config/models/work");
+const Work = require("../config/models/Work");
 
 const workController = {
   get_works: asyncHandler(async (req, res) => {
@@ -48,6 +48,13 @@ const workController = {
       return res.status(404).json({ message: "Work not found" });
     }
     res.status(200).json({ message: "Work deleted successfully" });
+  }),
+
+  get_medium_list: asyncHandler(async (req, res) => {
+    const workMediums = await Work.distinct("medium");
+    const allMediums = Array.from(new Set([...workMediums]));
+    if (!allMediums) res.status(404).json({ error: { message: "Not found" } });
+    res.status(200).json(allMediums);
   }),
 };
 

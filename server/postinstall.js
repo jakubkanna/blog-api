@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-const Setting = require("./config/models/setting");
+const Setting = require("./config/models/Setting");
 
 // MongoDB connection URI
 const mongoURI = process.env.DB_STRING;
@@ -18,7 +18,10 @@ async function createDefaultSettings() {
   try {
     const defaultSettings = new Setting({});
     const savedSetting = await defaultSettings.save();
-    console.log("Default settings created. ID:", savedSetting._id);
+    console.log(
+      "Default settings created. Document:",
+      JSON.stringify(savedSetting, null, 2)
+    );
   } catch (error) {
     console.error("Error creating default settings:", error);
   } finally {

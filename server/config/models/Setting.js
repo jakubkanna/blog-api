@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const MetaDataSchema = require("./schemas/Metadata");
 const Schema = mongoose.Schema;
+const { singleURLValidator } = require("./validators/URL_Validator");
 
 const SocialMediaSchema = new Schema({
   instagram: {
@@ -30,17 +32,29 @@ const AdditionalSchema = new Schema({
 
 const SettingSchema = new Schema({
   general: {
-    homepage: {
-      metadata: {
-        title: {
-          type: String,
-          default: "Default Title",
-        },
-        description: {
-          type: String,
-          default: "Default description for the homepage.",
+    website: {
+      details: {
+        name: { type: String, default: "Portfolio" },
+        domain: { type: String, default: "example.com" },
+        favicon: {
+          type: Schema.Types.ObjectId,
+          ref: "ImageInstance",
+          default: null,
         },
       },
+      homepage: {
+        header: { type: String, default: "A new website!" },
+        subheader: { type: String, default: "..." },
+        background: {
+          type: Schema.Types.ObjectId,
+          ref: "ImageInstance",
+          default: null,
+        },
+        metadata: MetaDataSchema,
+      },
+    },
+    dashboard: {
+      dark_mode: { type: Boolean, default: false },
     },
     apis: {
       server: {
@@ -56,7 +70,7 @@ const SettingSchema = new Schema({
         },
         api_url: {
           type: String,
-          default: "https://api.example.com/v1/",
+          default: "https://api.cloudinary.com/v1_1/",
         },
         api_key: {
           type: String,
@@ -75,7 +89,7 @@ const SettingSchema = new Schema({
     security: {
       https_protocol: {
         type: Boolean,
-        default: true,
+        default: false,
       },
     },
   },
@@ -95,6 +109,17 @@ const SettingSchema = new Schema({
         },
       },
     },
+    portfolio_pdf: {
+      enable: {
+        type: Boolean,
+        default: false,
+      },
+      url: {
+        type: String,
+        default: "https://example.com",
+        validate: singleURLValidator,
+      },
+    },
     contact: {
       type: [ContactSchema],
       default: [
@@ -102,7 +127,8 @@ const SettingSchema = new Schema({
           email: "contact@example.com",
           socialmedia: [
             {
-              instagram: {
+              platform: {
+                name: { type: String, default: "instagram" },
                 profile_url: "https://www.instagram.com/default_profile",
                 username: "@default_username",
               },
@@ -118,15 +144,6 @@ const SettingSchema = new Schema({
   },
   modified: Date,
 });
-
-// Ensure only one document in the collection
-SettingSchema.statics.findOneOrCreate = async function () {
-  let setting = await this.findOne();
-  if (!setting) {
-    setting = await this.create({});
-  }
-  return setting;
-};
 
 const Setting = mongoose.model("Setting", SettingSchema);
 

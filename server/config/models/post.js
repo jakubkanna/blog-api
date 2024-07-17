@@ -1,7 +1,6 @@
 //post.js
 
 const mongoose = require("mongoose");
-const { singleURLValidator } = require("./validators/URL_Validator");
 const { Schema } = mongoose;
 
 const BlockSchema = new mongoose.Schema({

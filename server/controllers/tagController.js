@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Post = require("../config/models/post");
 const Event = require("../config/models/event");
-const Work = require("../config/models/work");
+const Work = require("../config/models/Work");
 
 const tagController = {
   get_tags: asyncHandler(async (req, res) => {
