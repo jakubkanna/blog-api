@@ -1,4 +1,4 @@
-// models/Event.js
+// models/Project.js
 var mongoose = require("mongoose");
 var tagsValidator = require("./validators/tagsValidator");
 var { singleURLValidator } = require("./validators/URL_Validator");
@@ -13,7 +13,7 @@ const URLSchema = new Schema({
   },
 });
 
-var EventSchema = new Schema({
+var ProjectSchema = new Schema({
   title: { type: String, required: [true, "Title is required."], minLength: 3 },
   subtitle: String,
   description: String,
@@ -54,7 +54,7 @@ var EventSchema = new Schema({
 });
 
 // generate the slug
-EventSchema.pre("save", async function (next) {
+ProjectSchema.pre("save", async function (next) {
   const formattedTitle = this.title
     .toLowerCase()
     .split(" ")
@@ -76,4 +76,4 @@ EventSchema.pre("save", async function (next) {
 
   next();
 });
-module.exports = mongoose.model("Event", EventSchema);
+module.exports = mongoose.model("Project", ProjectSchema);

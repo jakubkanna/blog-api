@@ -5,7 +5,7 @@ const workController = {
   get_works: asyncHandler(async (req, res) => {
     const works = await Work.find()
       .sort({ timestamp: -1 })
-      .populate("events")
+      .populate("projects")
       .populate("images");
     if (!works || works.length === 0) {
       return res.status(404).json({ message: "Works not found" });
@@ -28,7 +28,7 @@ const workController = {
     const updatedWork = await Work.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
-    }).populate("events");
+    }).populate("projects");
 
     if (!updatedWork) {
       return res.status(404).json({ message: "Work not found" });

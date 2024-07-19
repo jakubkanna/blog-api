@@ -1,10 +1,18 @@
 const asyncHandler = require("express-async-handler");
+const ImageInstance = require("../config/models/ImageInstance");
+const VideoInstance = require("../config/models/VideoInstance");
 
 const mediaController = {
-  get_tags: asyncHandler(async (req, res) => {
-    //get all ImageInstances, and VideoInstances
+  get_all_media: asyncHandler(async (req, res) => {
+    const images = await ImageInstance.find();
+    const videos = await VideoInstance.find();
 
-    if (!allMedia) res.status(404).json({ message: "Media not found" });
+    if (!images && !videos) {
+      return res.status(404).json({ message: "Media not found" });
+    }
+
+    const allMedia = [...images, ...videos];
+
     res.status(200).json(allMedia);
   }),
 };

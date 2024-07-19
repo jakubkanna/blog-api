@@ -63,6 +63,12 @@ const SettingSchema = new Schema({
           default: "http://example.com/api/",
         },
       },
+      youtube: {
+        api_key: {
+          type: String,
+          default: "yout_api_key",
+        },
+      },
       cld: {
         enable_cld: {
           type: Boolean,
@@ -84,12 +90,6 @@ const SettingSchema = new Schema({
           type: String,
           default: "your_preset_name",
         },
-      },
-    },
-    security: {
-      https_protocol: {
-        type: Boolean,
-        default: false,
       },
     },
   },

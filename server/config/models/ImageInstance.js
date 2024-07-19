@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 
 const ImageInstanceShema = new Schema({
   type: { type: String, default: "image", enum: ["image"] },
+  etag: { type: String, unique: true, required: true },
   public_id: { type: String, unique: true, required: true },
   original_filename: { type: String, required: true },
   filename: { type: String },
@@ -17,7 +18,6 @@ const ImageInstanceShema = new Schema({
   secure_url: { type: String, validate: singleURLValidator },
   cld_url: { type: String, validate: singleURLValidator },
   cld_secure_url: { type: String, validate: singleURLValidator },
-
   tags: { type: [String], validate: tagsValidator, default: [] },
   alt: { type: String, default: "" },
   timestamp: { type: Date, default: Date.now },

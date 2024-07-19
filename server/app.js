@@ -36,9 +36,6 @@ async function main() {
   await mongoose.connect(mongoDB);
 }
 
-// Passport configuration
-require("./config/passport");
-
 // Cloudinary config
 require("./config/cloudinary");
 
@@ -52,11 +49,14 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routes setup
 app.use("/api", require("./routes/index"));
 app.use("/api/posts", require("./routes/posts"));
-app.use("/api/events", require("./routes/events"));
+app.use("/api/projects", require("./routes/projects"));
 app.use("/api/works", require("./routes/works"));
 app.use("/api/tags", require("./routes/tags"));
 app.use("/api/images", require("./routes/images"));
+app.use("/api/videos", require("./routes/videos"));
 app.use("/api/cld", require("./routes/cld"));
+app.use("/api/settings", require("./routes/settings"));
+app.use("/api/media", require("./routes/media"));
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

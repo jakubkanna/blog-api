@@ -1,27 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const imageinstanceController = require("../controllers/imageinstanceController");
-const { jwtAuth } = require("../middleware/authUtils");
-const multerConfig = require("../middleware/multer");
+const { jwtVerify } = require("../middleware/jwtUtils");
+const videoInstanceController = require("../controllers/videoInstanceController");
 
-// unprotected
-router.get("/", imageinstanceController.get_images);
-// Protected routes for image CRUD operations
-router.post("/delete", jwtAuth, imageinstanceController.delete_image);
-router.post(
-  "/update/:id",
-  jwtAuth,
-  multerConfig.upload,
-  multerConfig.processImage,
-  imageinstanceController.update_image
-);
-router.post(
-  "/upload",
-  jwtAuth,
-  multerConfig.upload,
-  multerConfig.processImage,
-  imageinstanceController.upload_image
-);
-router.post("/create", jwtAuth, imageinstanceController.create_image);
+// Route to get all videos (unprotected)
+router.get("/", videoInstanceController.get_videos);
+
+// Protected routes for video CRUD operations
+router.post("/create", jwtVerify, videoInstanceController.create_video);
+router.post("/update/:id", jwtVerify, videoInstanceController.update_video);
+router.post("/delete", jwtVerify, videoInstanceController.delete_videos);
 
 module.exports = router;

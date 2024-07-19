@@ -21,10 +21,10 @@ var WorkSchema = new Schema({
     max: 9999,
   },
   images: { type: [Schema.Types.ObjectId], ref: "ImageInstance", default: [] },
-  events: [
+  projects: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Event",
+      ref: "Project",
     },
   ],
 

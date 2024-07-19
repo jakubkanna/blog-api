@@ -1,6 +1,8 @@
 const multer = require("multer");
 const sharp = require("sharp");
 const path = require("path");
+const crypto = require("crypto");
+const fs = require("fs");
 
 // Check file type
 function checkFileType(file, cb) {
@@ -28,6 +30,14 @@ const upload = multer({
     checkFileType(file, cb);
   },
 }).array("files"); // Updated to handle multiple files
+
+// Function to calculate etag
+const calculateEtag = (filePath) => {
+  const fileBuffer = fs.readFileSync(filePath);
+  const hashSum = crypto.createHash("md5");
+  hashSum.update(fileBuffer);
+  return hashSum.digest("hex");
+};
 
 // Middleware to process image with Sharp
 const processImage = (req, res, next) => {
@@ -76,11 +86,15 @@ const processImage = (req, res, next) => {
             .toFile(outputPath);
         })
         .then((info) => {
+          // Calculate etag for the processed file
+          const etag = calculateEtag(outputPath);
+
           // Attach additional properties to req.files for further processing if needed
           file.filename = filename;
           file.path = outputPath;
           file.size = info.size;
           file.format = extname;
+          file.etag = etag;
           resolve(file);
         })
         .catch((err) => {

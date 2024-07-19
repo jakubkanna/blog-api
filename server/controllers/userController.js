@@ -1,8 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../config/models/user");
-const genPassword = require("../middleware/passwordUtils").genPassword;
 const validPassword = require("../middleware/passwordUtils").validPassword;
-const issueJWT = require("../middleware/jwtUtils").issueJWT;
+const { issueJWT } = require("../middleware/jwtUtils");
 
 const userController = {
   // auth
@@ -23,7 +22,7 @@ const userController = {
         success: true,
         user: { username: user.username },
         token: jwt.token,
-        expiersIn: jwt.expires,
+        expiresIn: jwt.expires,
       });
     } else {
       throw new Error("Wrong password or login");
